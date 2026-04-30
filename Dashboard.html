@@ -1,0 +1,1669 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>ORB Setup Pro</title>
+<style>
+:root{
+  --honeydew:#F8FFEB;
+  --celadon:#B1F6CE;
+  --lemon:#D9DE57;
+  --yale:#18486B;
+  --coffee:#301B03;
+  --coffee-mid:#5a3a10;
+  --celadon-dark:#6dbf94;
+  --lemon-dark:#a8ad1a;
+  --yale-light:#2a6a9a;
+  --bg:#0e1008;
+  --bg2:#151c0a;
+  --bg3:#1c2610;
+  --border:#2a3518;
+  --text:#F8FFEB;
+  --text2:#a8b890;
+  --text3:#5a6a40;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Helvetica Neue',Arial,sans-serif;min-height:100vh;padding-bottom:max(48px,env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+.app{max-width:430px;margin:0 auto}
+.mono{font-family:'SF Mono','Courier New',monospace}
+
+/* TOPBAR */
+.topbar{padding:14px 16px 10px;border-bottom:0.5px solid var(–border);display:flex;align-items:center;justify-content:space-between}
+.title{display:flex;align-items:center;gap:8px}
+.title-star{color:var(–lemon);font-size:20px}
+.t1{color:var(–lemon);font-size:19px;font-weight:700}
+.t2{color:var(–celadon);font-size:19px;font-weight:700}
+.t3{color:var(–text);font-size:19px;font-weight:700}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.et{font-family:‘SF Mono’,‘Courier New’,monospace;color:var(–lemon);font-size:13px}
+.conn{width:9px;height:9px;border-radius:50%;background:var(–text3);flex-shrink:0}
+.conn.live{background:var(–celadon);box-shadow:0 0 6px var(–celadon)}
+.conn.err{background:#e55}
+.conn.loading{background:var(–lemon);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+@-webkit-keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+.rbtn{padding:6px 14px;border-radius:20px;border:1.5px solid var(–lemon);background:transparent;color:var(–lemon);font-size:12px;font-weight:600;cursor:pointer;-webkit-appearance:none;appearance:none}
+.rbtn:active{background:var(–lemon);color:var(–coffee)}
+
+/* MARKET BAR */
+.mbar{padding:8px 16px;border-bottom:0.5px solid var(–border);display:flex;align-items:center;justify-content:space-between;transition:background .4s}
+.mbar.open{background:#0d1f0a}.mbar.pre{background:#1a1800}.mbar.after{background:#0a0f1a}
+.mdot{width:9px;height:9px;border-radius:50%;background:var(–text3);flex-shrink:0}
+.mlbl{font-size:13px;font-weight:600;color:var(–text3)}
+.mclocks{display:flex;gap:12px}
+.mclock-lbl{font-size:9px;color:var(–text3);text-transform:uppercase;letter-spacing:.08em}
+.mclock-val{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:12px;color:var(–text2)}
+
+/* TABS */
+.tabs{display:flex;gap:6px;padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:0.5px solid var(–border)}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:7px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:1.5px solid var(–border);background:transparent;color:var(–text3);white-space:nowrap;-webkit-appearance:none;appearance:none;transition:all .2s}
+.tab.active{background:var(–yale);border-color:var(–yale);color:var(–honeydew)}
+
+/* INSTRUMENTS */
+.irow{display:flex;gap:8px;padding:10px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;border-bottom:0.5px solid var(–border)}
+.irow::-webkit-scrollbar{display:none}
+.ibtn{padding:6px 16px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;border:1.5px solid var(–border);background:transparent;color:var(–text3);white-space:nowrap;-webkit-appearance:none;appearance:none;transition:all .15s}
+.ibtn.active{background:var(–lemon);border-color:var(–lemon);color:var(–coffee)}
+
+/* PAGES */
+.page{display:none;padding:14px 16px;flex-direction:column;gap:12px}
+.page.active{display:flex}
+
+/* CARDS */
+.card{background:var(–bg2);border-radius:20px;padding:16px;border:0.5px solid var(–border)}
+.card-title{font-size:11px;font-weight:600;color:var(–text3);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+
+/* KILL ZONE */
+.kill-card{border-radius:20px;padding:12px 16px;display:flex;align-items:center;gap:12px;border:1.5px solid var(–border);background:var(–bg2);transition:all .3s}
+.kill-card.on{background:#0d1f0a;border-color:var(–celadon)}
+.kill-card.off{background:#1a1800;border-color:var(–lemon-dark)}
+.kdot{width:11px;height:11px;border-radius:50%;background:var(–text3);flex-shrink:0}
+.kill-card.on .kdot{background:var(–celadon);box-shadow:0 0 8px var(–celadon)}
+.kill-card.off .kdot{background:var(–lemon)}
+.ktitle{font-size:14px;font-weight:700}
+.kill-card.on .ktitle{color:var(–celadon)}
+.kill-card.off .ktitle{color:var(–lemon)}
+.ksub{font-size:11px;color:var(–text3);margin-top:2px}
+
+/* PRICE */
+.price-big{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:36px;font-weight:500;color:var(–lemon);text-align:center;padding:8px 0 2px}
+.price-chg{font-size:13px;font-weight:600;text-align:center;margin-bottom:4px}
+.cup{color:var(–celadon)}.cdn{color:#e55}
+
+/* VWAP ROW */
+.vrow{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(–bg);border-radius:14px;border:0.5px solid var(–border);margin-top:6px}
+.vlbl{font-size:11px;color:var(–text3);text-transform:uppercase;letter-spacing:.07em}
+.vnum{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:15px;color:#5ab4e8}
+.vpill{font-size:11px;font-weight:700;padding:3px 10px;border-radius:10px}
+.vabove{background:#0d2a18;color:var(–celadon)}
+.vbelow{background:#2a0d0d;color:#e55}
+
+/* LEVELS */
+.lgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+.lev{background:var(–bg);border-radius:14px;padding:10px 12px;border:0.5px solid var(–border)}
+.llbl{font-size:10px;color:var(–text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.lval{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:17px;font-weight:500}
+.la{color:var(–lemon)}.lb{color:#5ab4e8}.lg{color:var(–celadon)}.lr{color:#e55}
+.lsub{font-size:10px;color:var(–text3);margin-top:2px}
+
+/* ALERT */
+.abox{border-radius:14px;padding:12px 14px;margin-bottom:10px;border:1px solid}
+.a-warn{background:#1a1800;border-color:var(–lemon-dark)}
+.a-warn .at{color:var(–lemon);font-size:13px;font-weight:700;margin-bottom:3px}
+.a-warn .ab{color:#8a8840;font-size:12px;line-height:1.6}
+.a-good{background:#0a1f10;border-color:var(–celadon-dark)}
+.a-good .at{color:var(–celadon);font-size:13px;font-weight:700;margin-bottom:3px}
+.a-good .ab{color:var(–celadon-dark);font-size:12px;line-height:1.6}
+.a-danger{background:#1f0a0a;border-color:#c44}
+.a-danger .at{color:#e55;font-size:13px;font-weight:700;margin-bottom:3px}
+.a-danger .ab{color:#a44;font-size:12px;line-height:1.6}
+
+/* BIAS TILES */
+.brow{display:flex;gap:8px}
+.btile{flex:1;border-radius:14px;padding:10px 12px;border:0.5px solid var(–border)}
+.blbl{font-size:10px;color:var(–text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px}
+.bval{font-size:13px;font-weight:700;color:var(–text3)}
+.bt-bull{background:#0a1f10;border-color:var(–celadon-dark)}.bt-bull .bval{color:var(–celadon)}
+.bt-bear{background:#1f0a0a;border-color:#c44}.bt-bear .bval{color:#e55}
+.bt-mix{background:#1a1800;border-color:var(–lemon-dark)}.bt-mix .bval{color:var(–lemon)}
+.bt-neu{background:var(–bg);border-color:var(–border)}
+
+/* SETUP ROWS */
+.srow{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:0.5px solid var(–border)}
+.srow:last-child{border-bottom:none}
+.skey{font-size:12px;color:var(–text3);text-transform:uppercase;letter-spacing:.05em}
+.sval{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:15px;font-weight:500;color:var(–lemon)}
+.sval.g{color:var(–celadon)}.sval.r{color:#e55}.sval.m{color:var(–text3)}
+
+/* GRADE PILL */
+.gpill{font-size:13px;font-weight:700;padding:5px 14px;border-radius:20px;border:1.5px solid;display:inline-block}
+.gA{background:#0a1f10;border-color:var(–celadon);color:var(–celadon)}
+.gB{background:#1a1800;border-color:var(–lemon);color:var(–lemon)}
+.gC{background:#1a0a0a;border-color:#c44;color:#e55}
+
+/* BAR */
+.bar-bg{height:5px;background:var(–border);border-radius:3px;overflow:hidden;margin-bottom:8px}
+.bar-fill{height:100%;border-radius:3px;transition:width .4s,background .4s}
+
+/* DIR BUTTONS */
+.drow{display:flex;gap:8px}
+.dbtn{flex:1;padding:12px;border-radius:14px;border:1.5px solid var(–border);background:transparent;color:var(–text3);font-size:14px;font-weight:700;cursor:pointer;text-align:center;-webkit-appearance:none;appearance:none;transition:all .15s}
+.dbtn.la{background:#0a1f10;border-color:var(–celadon);color:var(–celadon)}
+.dbtn.sa{background:#1f0a0a;border-color:#c44;color:#e55}
+.dbtn.na{background:var(–bg3);border-color:var(–text3);color:var(–text2)}
+
+/* CHECKLIST */
+.clitem{background:var(–bg2);border-radius:14px;padding:12px 14px;border:1px solid var(–border);cursor:pointer;display:flex;align-items:flex-start;gap:12px;transition:all .15s;user-select:none}
+.clitem.pass{border-color:var(–celadon-dark);background:#0a1f10}
+.clitem.fail{border-color:#c44;background:#1f0a0a}
+.clitem.neutral{border-color:var(–lemon-dark);background:#1a1800}
+.cidot{width:22px;height:22px;border-radius:50%;border:1.5px solid var(–border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;font-weight:700;color:transparent;margin-top:1px}
+.clitem.pass .cidot{background:var(–celadon);border-color:var(–celadon);color:var(–coffee)}
+.clitem.fail .cidot{background:#e55;border-color:#e55;color:#fff}
+.clitem.neutral .cidot{background:var(–lemon);border-color:var(–lemon);color:var(–coffee)}
+.citext{flex:1;font-size:13px;color:var(–text3);line-height:1.5}
+.clitem.pass .citext{color:var(–celadon)}
+.clitem.fail .citext{color:#e88}
+.clitem.neutral .citext{color:var(–lemon)}
+.ci-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;flex-shrink:0;margin-top:2px}
+.badge-long{background:#0a1f10;color:var(–celadon);border:0.5px solid var(–celadon-dark)}
+.badge-short{background:#1f0a0a;color:#e55;border:0.5px solid #c44}
+.badge-pts{background:var(–bg);color:var(–text3);border:0.5px solid var(–border)}
+
+/* INPUTS */
+.icard{background:var(–bg2);border-radius:20px;padding:14px;border:0.5px solid var(–border)}
+.ig2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.ig3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.iw{display:flex;flex-direction:column;gap:4px}
+.ilbl{font-size:10px;color:var(–text3);letter-spacing:.08em;text-transform:uppercase}
+.ifield{background:var(–bg);border:1px solid var(–border);border-radius:10px;padding:9px 11px;color:var(–lemon);font-size:15px;font-weight:500;width:100%;font-family:‘SF Mono’,‘Courier New’,monospace;-webkit-appearance:none;appearance:none}
+.ifield:focus{outline:none;border-color:var(–lemon)}
+.oval{background:var(–bg);border:0.5px solid var(–border);border-radius:10px;padding:9px 11px;font-size:14px;font-weight:500;font-family:‘SF Mono’,‘Courier New’,monospace;color:var(–text3);min-height:38px}
+.oval.g{color:var(–celadon);border-color:var(–celadon-dark)}
+.oval.a{color:var(–lemon);border-color:var(–lemon-dark)}
+
+/* ACTION BUTTONS */
+.actrow{display:flex;gap:8px}
+.abtn{flex:1;padding:13px;border-radius:16px;font-size:14px;font-weight:700;cursor:pointer;border:none;-webkit-appearance:none;appearance:none;transition:all .15s}
+.abtn:active{opacity:.85;transform:scale(.98)}
+.bwin{background:var(–celadon);color:var(–coffee)}
+.bloss{background:#c44;color:#fff}
+.breset{background:var(–bg3);color:var(–text3);border:1px solid var(–border);flex:0.6}
+
+/* STATS */
+.sg2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stile{background:var(–bg2);border-radius:20px;padding:16px;border:0.5px solid var(–border);text-align:center}
+.snum{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:28px;font-weight:500;color:var(–text);line-height:1}
+.slbl{font-size:11px;color:var(–text3);margin-top:5px;text-transform:uppercase;letter-spacing:.06em}
+.snum.g{color:var(–celadon)}.snum.r{color:#e55}.snum.a{color:var(–lemon)}
+
+/* TIMELINE */
+.tl{display:flex;flex-direction:column;gap:1px}
+.tlrow{padding:12px 14px;background:var(–bg2);border-bottom:0.5px solid var(–border);display:flex;gap:10px;align-items:flex-start}
+.tlrow:first-child{border-radius:16px 16px 0 0}
+.tlrow:last-child{border-radius:0 0 16px 16px;border-bottom:none}
+.tlrow:only-child{border-radius:16px}
+.tldot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dw{background:var(–celadon)}.dl{background:#e55}
+.tlbody{flex:1}
+.tltop{display:flex;align-items:center;gap:6px;margin-bottom:3px;flex-wrap:wrap}
+.tldir.long{color:var(–celadon);font-size:12px;font-weight:700}
+.tldir.short{color:#e55;font-size:12px;font-weight:700}
+.tlgrade{font-size:10px;font-weight:700;padding:1px 7px;border-radius:6px}
+.tlsub{font-size:11px;color:var(–text3);line-height:1.4}
+.tlright{text-align:right;flex-shrink:0}
+.tlr{font-size:13px;font-weight:700;font-family:‘SF Mono’,‘Courier New’,monospace}
+.tlt{font-size:10px;color:var(–text3);margin-top:2px}
+.empty{text-align:center;padding:32px 16px;color:var(–text3);font-size:13px;background:var(–bg2);border-radius:16px}
+.ns-btn{width:100%;padding:14px;border-radius:16px;font-size:14px;font-weight:700;cursor:pointer;border:1px solid var(–border);background:var(–bg2);color:var(–text3);-webkit-appearance:none;appearance:none}
+
+/* LOT CALCULATOR */
+.calc-result{background:var(–bg);border-radius:16px;padding:14px;border:0.5px solid var(–border)}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(–border)}
+.calc-row:last-child{border-bottom:none}
+.calc-key{font-size:12px;color:var(–text3);text-transform:uppercase;letter-spacing:.05em}
+.calc-val{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:15px;font-weight:500;color:var(–lemon)}
+.calc-val.g{color:var(–celadon)}.calc-val.r{color:#e55}
+.calc-big{font-family:‘SF Mono’,‘Courier New’,monospace;font-size:40px;font-weight:500;color:var(–celadon);text-align:center;padding:10px 0}
+.calc-sub{font-size:11px;color:var(–text3);text-align:center;margin-top:2px}
+.warn-box{background:#1f0a0a;border:1px solid #c44;border-radius:12px;padding:10px 14px;font-size:12px;color:#e88;line-height:1.5}
+.good-box{background:#0a1f10;border:1px solid var(–celadon-dark);border-radius:12px;padding:10px 14px;font-size:12px;color:var(–celadon);line-height:1.5}
+
+/* RULES TAB */
+.rule-section{background:var(–bg2);border-radius:16px;border:0.5px solid var(–border);overflow:hidden;margin-bottom:2px}
+.rule-section-hdr{padding:12px 16px;background:var(–yale);display:flex;align-items:center;gap:8px}
+.rule-section-title{font-size:13px;font-weight:700;color:var(–honeydew)}
+.rule-section-icon{font-size:15px}
+.rule-body{padding:12px 16px;display:flex;flex-direction:column;gap:6px}
+.rule-item{display:flex;align-items:flex-start;gap:10px;padding:6px 0;border-bottom:0.5px solid var(–border)}
+.rule-item:last-child{border-bottom:none}
+.rule-dot{width:6px;height:6px;border-radius:50%;background:var(–lemon);flex-shrink:0;margin-top:6px}
+.rule-text{font-size:13px;color:var(–text2);line-height:1.6}
+.rule-text strong{color:var(–lemon);font-weight:700}
+.rule-core{background:var(–coffee-mid);border:1.5px solid var(–lemon);border-radius:16px;padding:14px 16px;margin-bottom:4px}
+.rule-core-title{font-size:12px;font-weight:700;color:var(–lemon);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.rule-core-text{font-size:13px;color:var(–honeydew);line-height:1.7}
+.mental-q{background:var(–bg2);border-radius:14px;padding:12px 14px;border:1px solid var(–border);display:flex;align-items:center;justify-content:space-between;gap:10px}
+.mental-q-text{font-size:13px;color:var(–text2);line-height:1.4;flex:1}
+.mental-toggle{display:flex;gap:6px;flex-shrink:0}
+.mtbtn{padding:5px 12px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;border:1.5px solid var(–border);background:transparent;color:var(–text3);-webkit-appearance:none;appearance:none}
+.mtbtn.yes-active{background:#0a1f10;border-color:var(–celadon);color:var(–celadon)}
+.mtbtn.no-active{background:#1f0a0a;border-color:#c44;color:#e55}
+.trade-verdict{border-radius:16px;padding:14px 16px;text-align:center;border:1.5px solid var(–border)}
+.tv-take{background:#0a1f10;border-color:var(–celadon)}
+.tv-no{background:#1f0a0a;border-color:#c44}
+.tv-wait{background:#1a1800;border-color:var(–lemon-dark)}
+.tv-label{font-size:20px;font-weight:700;margin-bottom:4px}
+.tv-sub{font-size:12px;color:var(–text3);line-height:1.5}
+</style>
+
+</head>
+<body>
+<div class="app">
+
+<!-- TOPBAR -->
+
+<div class="topbar">
+  <div class="title">
+    <div class="title-star">✦</div>
+    <span class="t1">ORB</span><span class="t2"> SETUP</span><span class="t3"> PRO</span>
+  </div>
+  <div class="topbar-right">
+    <div class="conn" id="conn"></div>
+    <span class="et" id="et-clock">--:--</span>
+    <button class="rbtn" onclick="fetchAll()">&#8635; Refresh</button>
+  </div>
+</div>
+
+<!-- MARKET BAR -->
+
+<div class="mbar" id="mbar">
+  <div style="display:flex;align-items:center;gap:8px">
+    <div class="mdot" id="mdot"></div>
+    <span class="mlbl" id="mlbl">Loading...</span>
+  </div>
+  <div class="mclocks">
+    <div><div class="mclock-lbl">NY</div><div class="mclock-val" id="mny">--:--</div></div>
+    <div><div class="mclock-lbl">London</div><div class="mclock-val" id="mlon">--:--</div></div>
+    <div><div class="mclock-lbl">Tokyo</div><div class="mclock-val" id="mtok">--:--</div></div>
+  </div>
+</div>
+
+<!-- TABS -->
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('calc',this)">Lot Calc</button>
+  <button class="tab" onclick="showTab('prep',this)">Prep</button>
+  <button class="tab" onclick="showTab('checklist',this)">Checklist</button>
+  <button class="tab" onclick="showTab('vwap',this)">VWAP</button>
+  <button class="tab" onclick="showTab('journal',this)">Journal</button>
+  <button class="tab" onclick="showTab('rules',this)">Rules</button>
+  <button class="tab" onclick="showTab('contracts',this)">Contracts</button>
+  <button class="tab" onclick="showTab('orbguide',this)">ORB Guide</button>
+  <button class="tab" onclick="showTab('stats',this)">Stats</button>
+</div>
+
+<!-- INSTRUMENTS -->
+
+<div class="irow">
+  <button class="ibtn active" onclick="setInst(this,'NQ=F','NQ',false)">NQ</button>
+  <button class="ibtn" onclick="setInst(this,'MNQ=F','MNQ',false)">MNQ</button>
+  <button class="ibtn" onclick="setInst(this,'GC=F','GC',true)">GC</button>
+  <button class="ibtn" onclick="setInst(this,'MGC=F','MGC',true)">MGC</button>
+  <button class="ibtn" onclick="setInst(this,'XAUUSD=X','XAUUSD',true)">XAUUSD</button>
+</div>
+
+<!-- ═══════ LOT CALCULATOR ═══════ -->
+
+<div class="page active" id="tab-calc" style="margin-top:8px">
+
+  <div class="kill-card off" id="kill-card">
+    <div class="kdot" id="kdot"></div>
+    <div><div class="ktitle" id="ktitle">Kill zone inactive</div><div class="ksub" id="ksub">Outside optimal entry window</div></div>
+  </div>
+
+  <!-- MODE TABS -->
+
+  <div style="display:flex;gap:6px">
+    <button class="tab active" style="flex:1;border-radius:14px;font-size:12px" id="mode-btn-risk" onclick="setCalcMode('risk')">Risk &rarr; Lots</button>
+    <button class="tab" style="flex:1;border-radius:14px;font-size:12px" id="mode-btn-lots" onclick="setCalcMode('lots')">Lots &rarr; Risk</button>
+    <button class="tab" style="flex:1;border-radius:14px;font-size:12px" id="mode-btn-rr" onclick="setCalcMode('rr')">Chart Levels</button>
+  </div>
+
+  <!-- INSTRUMENT BAR -->
+
+  <div style="background:var(--bg3);border-radius:14px;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;border:0.5px solid var(--border)">
+    <div>
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px" id="calc-inst-lbl">NQ</div>
+      <div class="mono" style="font-size:12px;color:var(--text2)" id="calc-tick-val">$5.00 / tick &middot; $20.00 / point</div>
+    </div>
+    <div style="text-align:right">
+      <div style="font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:2px">Max lots</div>
+      <div class="mono" style="font-size:14px;color:var(--lemon)" id="calc-max-lots">3</div>
+    </div>
+  </div>
+
+  <!-- MODE A: Risk -> Lots -->
+
+  <div class="card" id="calc-mode-risk">
+    <div class="card-title">Given risk &amp; stop size &rarr; find lot size</div>
+    <div class="ig2" style="margin-bottom:10px">
+      <div class="iw"><span class="ilbl">Max risk ($)</span><input class="ifield" id="a-risk" type="number" value="200" oninput="calcA()"></div>
+      <div class="iw"><span class="ilbl">R:R target</span><input class="ifield" id="a-rr" type="number" value="2" step="0.5" oninput="calcA()"></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Enter stop in any field &mdash; others auto-fill</div>
+    <div class="ig3" style="margin-bottom:12px">
+      <div class="iw"><span class="ilbl">Stop (ticks)</span><input class="ifield" id="a-ticks" type="number" placeholder="0" oninput="syncStop('ticks','a')"></div>
+      <div class="iw"><span class="ilbl">Stop (pts)</span><input class="ifield" id="a-pts" type="number" placeholder="0" step="0.25" oninput="syncStop('pts','a')"></div>
+      <div class="iw"><span class="ilbl">Stop ($)</span><input class="ifield" id="a-usd" type="number" placeholder="0" oninput="syncStop('usd','a')"></div>
+    </div>
+    <div class="calc-big" id="a-lots">--</div>
+    <div class="calc-sub">optimal contracts</div>
+    <div class="calc-result" style="margin-top:10px">
+      <div class="calc-row"><span class="calc-key">Lot size</span><span class="calc-val" id="a-res-lots">--</span></div>
+      <div class="calc-row"><span class="calc-key">Stop / lot ($)</span><span class="calc-val r" id="a-res-stop-usd">--</span></div>
+      <div class="calc-row"><span class="calc-key">Total risk ($)</span><span class="calc-val r" id="a-res-risk">--</span></div>
+      <div class="calc-row"><span class="calc-key">Target (pts)</span><span class="calc-val g" id="a-res-tp-pts">--</span></div>
+      <div class="calc-row"><span class="calc-key">Target (ticks)</span><span class="calc-val g" id="a-res-tp-ticks">--</span></div>
+      <div class="calc-row"><span class="calc-key">Target / lot ($)</span><span class="calc-val g" id="a-res-tp-usd">--</span></div>
+      <div class="calc-row"><span class="calc-key">Total reward ($)</span><span class="calc-val g" id="a-res-reward">--</span></div>
+    </div>
+    <div id="a-verdict" style="margin-top:10px"></div>
+  </div>
+
+  <!-- MODE B: Lots -> Risk -->
+
+  <div class="card" id="calc-mode-lots" style="display:none">
+    <div class="card-title">Given lot size &amp; stop &rarr; find dollar risk</div>
+    <div class="ig2" style="margin-bottom:10px">
+      <div class="iw"><span class="ilbl">Lot size</span><input class="ifield" id="b-lots" type="number" value="1" min="1" step="1" oninput="calcB()"></div>
+      <div class="iw"><span class="ilbl">R:R target</span><input class="ifield" id="b-rr" type="number" value="2" step="0.5" oninput="calcB()"></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Enter stop in any field &mdash; others auto-fill</div>
+    <div class="ig3" style="margin-bottom:12px">
+      <div class="iw"><span class="ilbl">Stop (ticks)</span><input class="ifield" id="b-ticks" type="number" placeholder="0" oninput="syncStop('ticks','b')"></div>
+      <div class="iw"><span class="ilbl">Stop (pts)</span><input class="ifield" id="b-pts" type="number" placeholder="0" step="0.25" oninput="syncStop('pts','b')"></div>
+      <div class="iw"><span class="ilbl">Stop ($)</span><input class="ifield" id="b-usd" type="number" placeholder="0" oninput="syncStop('usd','b')"></div>
+    </div>
+    <div class="calc-big" id="b-risk">--</div>
+    <div class="calc-sub">total dollar risk</div>
+    <div class="calc-result" style="margin-top:10px">
+      <div class="calc-row"><span class="calc-key">Stop / lot ($)</span><span class="calc-val r" id="b-res-stop-usd">--</span></div>
+      <div class="calc-row"><span class="calc-key">Total risk ($)</span><span class="calc-val r" id="b-res-risk">--</span></div>
+      <div class="calc-row"><span class="calc-key">Target (pts)</span><span class="calc-val g" id="b-res-tp-pts">--</span></div>
+      <div class="calc-row"><span class="calc-key">Target (ticks)</span><span class="calc-val g" id="b-res-tp-ticks">--</span></div>
+      <div class="calc-row"><span class="calc-key">Target / lot ($)</span><span class="calc-val g" id="b-res-tp-usd">--</span></div>
+      <div class="calc-row"><span class="calc-key">Total reward ($)</span><span class="calc-val g" id="b-res-reward">--</span></div>
+    </div>
+    <div id="b-verdict" style="margin-top:10px"></div>
+  </div>
+
+  <!-- MODE C: Chart Levels -->
+
+  <div class="card" id="calc-mode-rr" style="display:none">
+    <div class="card-title">Given lots &amp; risk &rarr; exact SL &amp; TP for TradingView</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6">Enter entry price, lot size, and max risk. Get the exact stop and target prices to draw on your chart.</div>
+    <div class="ig2" style="margin-bottom:10px">
+      <div class="iw"><span class="ilbl">Entry price</span><input class="ifield" id="c-entry" type="number" placeholder="0.00" step="0.25" oninput="calcC()"></div>
+      <div class="iw"><span class="ilbl">Lot size</span><input class="ifield" id="c-lots" type="number" value="1" min="1" step="1" oninput="calcC()"></div>
+    </div>
+    <div class="ig2" style="margin-bottom:12px">
+      <div class="iw"><span class="ilbl">Max risk ($)</span><input class="ifield" id="c-risk" type="number" value="200" oninput="calcC()"></div>
+      <div class="iw"><span class="ilbl">R:R target</span><input class="ifield" id="c-rr" type="number" value="2" step="0.5" oninput="calcC()"></div>
+    </div>
+    <div style="font-size:10px;color:var(--text3);margin-bottom:8px;text-transform:uppercase;letter-spacing:.07em;font-weight:600">Draw these on TradingView</div>
+    <div class="calc-result">
+      <div class="calc-row"><span class="calc-key">Max stop (ticks)</span><span class="calc-val" id="c-res-stop-ticks">--</span></div>
+      <div class="calc-row"><span class="calc-key">Max stop (pts)</span><span class="calc-val" id="c-res-stop-pts">--</span></div>
+      <div style="height:6px"></div>
+      <div class="calc-row" style="background:#0a1f10;border-radius:8px;padding:8px 10px;margin:2px 0"><span class="calc-key" style="color:var(--celadon)">LONG: Stop loss</span><span class="calc-val r" id="c-res-sl-long">--</span></div>
+      <div class="calc-row" style="background:#0a1f10;border-radius:8px;padding:8px 10px;margin:2px 0"><span class="calc-key" style="color:var(--celadon)">LONG: Take profit</span><span class="calc-val g" id="c-res-tp-long">--</span></div>
+      <div style="height:6px"></div>
+      <div class="calc-row" style="background:#1f0a0a;border-radius:8px;padding:8px 10px;margin:2px 0"><span class="calc-key" style="color:#e55">SHORT: Stop loss</span><span class="calc-val r" id="c-res-sl-short">--</span></div>
+      <div class="calc-row" style="background:#1f0a0a;border-radius:8px;padding:8px 10px;margin:2px 0"><span class="calc-key" style="color:#e55">SHORT: Take profit</span><span class="calc-val g" id="c-res-tp-short">--</span></div>
+      <div style="height:6px"></div>
+      <div class="calc-row"><span class="calc-key">Total risk ($)</span><span class="calc-val r" id="c-res-risk">--</span></div>
+      <div class="calc-row"><span class="calc-key">Total reward ($)</span><span class="calc-val g" id="c-res-reward">--</span></div>
+    </div>
+    <div id="c-verdict" style="margin-top:10px"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Live levels &middot; <span id="clvl-inst">NQ</span></div>
+    <div class="lgrid">
+      <div class="lev"><div class="llbl">PDH</div><div class="lval la" id="lv-pdh">--</div><div class="lsub">Prior day high</div></div>
+      <div class="lev"><div class="llbl">PDL</div><div class="lval la" id="lv-pdl">--</div><div class="lsub">Prior day low</div></div>
+      <div class="lev"><div class="llbl">PMH</div><div class="lval lb" id="lv-pmh">--</div><div class="lsub">Pre-market high</div></div>
+      <div class="lev"><div class="llbl">PML</div><div class="lval lb" id="lv-pml">--</div><div class="lsub">Pre-market low</div></div>
+      <div class="lev"><div class="llbl">ORB High</div><div class="lval lg" id="lv-orbh">--</div><div class="lsub">Opening range</div></div>
+      <div class="lev"><div class="llbl">ORB Low</div><div class="lval lr" id="lv-orbl">--</div><div class="lsub">Opening range</div></div>
+    </div>
+    <div class="vrow">
+      <span class="vlbl">VWAP</span>
+      <span class="vnum" id="vwap-val">--</span>
+      <span class="vpill" id="vwap-pos"></span>
+    </div>
+    <div style="text-align:center;margin-top:10px">
+      <div class="price-big" id="live-price">--</div>
+      <div class="price-chg" id="price-chg"></div>
+      <div style="font-size:10px;color:var(--text3);margin-top:2px" id="price-src">Yahoo Finance &middot; 15 min delay</div>
+    </div>
+  </div>
+
+</div>
+<!-- ═══════ CHECKLIST ═══════ -->
+<div class="page" id="tab-checklist">
+
+  <div style="display:flex;align-items:center;justify-content:space-between" class="card">
+    <div>
+      <span class="mono" style="font-size:32px;font-weight:500;color:var(--text)" id="ck-score">0</span>
+      <span style="font-size:14px;color:var(--text3);margin-left:3px">/ 9 pts</span>
+    </div>
+    <div>
+      <div class="gpill gC" id="ck-grade">No setup</div>
+      <div style="font-size:11px;color:var(--text3);margin-top:6px;text-align:right" id="ck-bias">Bias: —</div>
+    </div>
+  </div>
+
+  <div class="bar-bg"><div class="bar-fill" id="score-bar" style="width:0%;background:#c44"></div></div>
+
+  <div id="ck-verdict" class="trade-verdict tv-wait">
+    <div class="tv-label" id="cv-label" style="color:var(--lemon)">— WAITING</div>
+    <div class="tv-sub" id="cv-sub">Complete checklist to determine trade bias</div>
+  </div>
+
+  <div style="font-size:11px;color:var(--text3);padding:0 2px">Tap once = pass &#10003; · Tap twice = fail &#10005; · Tap three times = clear</div>
+
+  <div id="cl-wrap" style="display:flex;flex-direction:column;gap:8px"></div>
+
+  <div class="icard">
+    <div class="ig2">
+      <div class="iw"><span class="ilbl">Entry price</span><input class="ifield" id="inp-entry" type="number" placeholder="0.00" oninput="calcTrade()"></div>
+      <div class="iw"><span class="ilbl">Stop loss</span><input class="ifield" id="inp-sl" type="number" placeholder="0.00" oninput="calcTrade()"></div>
+    </div>
+    <div class="ig3">
+      <div class="iw"><span class="ilbl">R:R</span><input class="ifield" id="inp-rr" type="number" placeholder="2" value="2" step="0.5" oninput="calcTrade()"></div>
+      <div class="iw"><span class="ilbl">Target</span><div class="oval g" id="out-tp">—</div></div>
+      <div class="iw"><span class="ilbl">Reward</span><div class="oval g" id="out-reward">—</div></div>
+    </div>
+  </div>
+
+  <div class="actrow">
+    <button class="abtn bwin" onclick="logWin()">Log Win</button>
+    <button class="abtn bloss" onclick="logLoss()">Log Loss</button>
+    <button class="abtn breset" onclick="resetChecklist()">Reset</button>
+  </div>
+
+</div>
+
+<!-- ═══════ PREP ═══════ -->
+
+<div class="page" id="tab-prep">
+
+  <div class="card">
+    <div class="card-title">&#128197; Daily Session Prep</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6">Complete before the session opens. Skip nothing.</div>
+
+```
+<div style="display:flex;flex-direction:column;gap:8px" id="prep-checks">
+  <div class="mental-q" id="pq0">
+    <div class="mental-q-text">Checked economic calendar for high-impact news today?</div>
+    <div class="mental-toggle">
+      <button class="mtbtn" id="pq0-yes" onclick="setPrep(0,'yes')">Yes</button>
+      <button class="mtbtn" id="pq0-no" onclick="setPrep(0,'no')">No</button>
+    </div>
+  </div>
+  <div class="mental-q" id="pq1">
+    <div class="mental-q-text">Fed speaking / FOMC / CPI today? (if yes — reduce size or skip)</div>
+    <div class="mental-toggle">
+      <button class="mtbtn" id="pq1-yes" onclick="setPrep(1,'yes')">Yes</button>
+      <button class="mtbtn" id="pq1-no" onclick="setPrep(1,'no')">No</button>
+    </div>
+  </div>
+  <div class="mental-q" id="pq2">
+    <div class="mental-q-text">Reviewed yesterday's trade — know what worked / didn't?</div>
+    <div class="mental-toggle">
+      <button class="mtbtn" id="pq2-yes" onclick="setPrep(2,'yes')">Yes</button>
+      <button class="mtbtn" id="pq2-no" onclick="setPrep(2,'no')">No</button>
+    </div>
+  </div>
+  <div class="mental-q" id="pq3">
+    <div class="mental-q-text">Marked PDH, PDL, PMH, PML and ORB levels on chart?</div>
+    <div class="mental-toggle">
+      <button class="mtbtn" id="pq3-yes" onclick="setPrep(3,'yes')">Yes</button>
+      <button class="mtbtn" id="pq3-no" onclick="setPrep(3,'no')">No</button>
+    </div>
+  </div>
+  <div class="mental-q" id="pq4">
+    <div class="mental-q-text">Lot size and bracket order pre-calculated before market opens?</div>
+    <div class="mental-toggle">
+      <button class="mtbtn" id="pq4-yes" onclick="setPrep(4,'yes')">Yes</button>
+      <button class="mtbtn" id="pq4-no" onclick="setPrep(4,'no')">No</button>
+    </div>
+  </div>
+  <div class="mental-q" id="pq5">
+    <div class="mental-q-text">Mentally fresh — not tired, emotional, or distracted?</div>
+    <div class="mental-toggle">
+      <button class="mtbtn" id="pq5-yes" onclick="setPrep(5,'yes')">Yes</button>
+      <button class="mtbtn" id="pq5-no" onclick="setPrep(5,'no')">No</button>
+    </div>
+  </div>
+</div>
+```
+
+  </div>
+
+  <div class="trade-verdict tv-wait" id="prep-verdict">
+    <div class="tv-label" id="pv-label" style="color:var(--lemon)">Complete prep checklist</div>
+    <div class="tv-sub" id="pv-sub">Answer all questions before the session opens</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#128200; ORB Range Size</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:10px;line-height:1.6">Based on today's ORB vs 5-day average. Guides your position sizing.</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div class="lev" style="flex:1"><div class="llbl">Today's ORB</div><div class="lval la" id="orb-size-today">--</div><div class="lsub">pts wide</div></div>
+      <div class="lev" style="flex:1"><div class="llbl">5-Day Avg</div><div class="lval lb" id="orb-size-avg">--</div><div class="lsub">pts avg</div></div>
+      <div class="lev" style="flex:1"><div class="llbl">vs Average</div><div class="lval" id="orb-size-vs">--</div><div class="lsub">relative</div></div>
+    </div>
+    <div id="orb-size-verdict" style="padding:10px 12px;background:var(--bg);border-radius:12px;border:0.5px solid var(--border);font-size:12px;color:var(--text3);line-height:1.5">
+      Tap Refresh to load ORB data
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#128221; Session notes</div>
+    <textarea id="prep-notes" style="width:100%;background:var(--bg);border:0.5px solid var(--border);border-radius:12px;padding:10px 12px;color:var(--text2);font-size:13px;line-height:1.6;resize:none;height:90px;font-family:-apple-system,BlinkMacSystemFont,sans-serif" placeholder="Bias today, key levels to watch, anything that could affect the session..."></textarea>
+  </div>
+
+<button class="ns-btn" onclick="resetPrep()">Reset prep</button>
+
+</div>
+
+<!-- ═══════ JOURNAL ═══════ -->
+
+<div class="page" id="tab-journal">
+
+  <div class="card">
+    <div class="card-title">&#9997; Pre-trade snapshot</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px">Fill this out before you click the button. Not after.</div>
+
+```
+<div class="ig2" style="margin-bottom:10px">
+  <div class="iw"><span class="ilbl">Entry price</span><input class="ifield" id="j-entry" type="number" placeholder="0.00" step="0.25" oninput="updateJournalCalc()"></div>
+  <div class="iw"><span class="ilbl">Stop loss</span><input class="ifield" id="j-sl" type="number" placeholder="0.00" step="0.25" oninput="updateJournalCalc()"></div>
+</div>
+<div class="ig2" style="margin-bottom:10px">
+  <div class="iw"><span class="ilbl">Lot size</span><input class="ifield" id="j-lots" type="number" value="1" min="1" step="1" oninput="updateJournalCalc()"></div>
+  <div class="iw"><span class="ilbl">Direction</span>
+    <div style="display:flex;gap:6px;margin-top:4px">
+      <button class="dbtn" id="j-long-btn" onclick="setJDir('long')" style="flex:1;padding:9px">&#8599; Long</button>
+      <button class="dbtn" id="j-short-btn" onclick="setJDir('short')" style="flex:1;padding:9px">&#8600; Short</button>
+    </div>
+  </div>
+</div>
+
+<div class="calc-result" style="margin-bottom:12px">
+  <div class="calc-row"><span class="calc-key">Target (2R)</span><span class="calc-val g" id="j-tp">--</span></div>
+  <div class="calc-row"><span class="calc-key">Dollar risk</span><span class="calc-val r" id="j-risk-usd">--</span></div>
+  <div class="calc-row"><span class="calc-key">Dollar target</span><span class="calc-val g" id="j-reward-usd">--</span></div>
+  <div class="calc-row"><span class="calc-key">Setup grade</span><span class="calc-val" id="j-grade">--</span></div>
+</div>
+
+<div class="iw" style="margin-bottom:10px">
+  <span class="ilbl">Why are you taking this trade?</span>
+  <textarea id="j-reason" style="width:100%;background:var(--bg);border:0.5px solid var(--border);border-radius:12px;padding:10px 12px;color:var(--text2);font-size:13px;line-height:1.6;resize:none;height:70px;margin-top:4px;font-family:-apple-system,BlinkMacSystemFont,sans-serif" placeholder="Clean ORB breakout with volume, price above VWAP, aligns with PDH..."></textarea>
+</div>
+
+<div class="actrow">
+  <button class="abtn bwin" onclick="logJournalWin()">Log Win</button>
+  <button class="abtn bloss" onclick="logJournalLoss()">Log Loss</button>
+  <button class="abtn breset" onclick="resetJournal()">Clear</button>
+</div>
+```
+
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#128202; Session P&amp;L</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div class="stile" style="flex:1"><div class="snum" id="pnl-dollar" style="font-size:24px">$0</div><div class="slbl">Total P&amp;L</div></div>
+      <div class="stile" style="flex:1"><div class="snum a" id="pnl-r">0R</div><div class="slbl">Total R</div></div>
+    </div>
+    <div class="calc-result">
+      <div class="calc-row"><span class="calc-key">Trades</span><span class="calc-val" id="pnl-trades">0</span></div>
+      <div class="calc-row"><span class="calc-key">Wins</span><span class="calc-val g" id="pnl-wins">0</span></div>
+      <div class="calc-row"><span class="calc-key">Losses</span><span class="calc-val r" id="pnl-losses">0</span></div>
+      <div class="calc-row"><span class="calc-key">Win rate</span><span class="calc-val" id="pnl-wr">0%</span></div>
+      <div class="calc-row"><span class="calc-key">Avg win ($)</span><span class="calc-val g" id="pnl-avg-win">--</span></div>
+      <div class="calc-row"><span class="calc-key">Avg loss ($)</span><span class="calc-val r" id="pnl-avg-loss">--</span></div>
+    </div>
+    <div id="pnl-limit-warn" style="margin-top:10px"></div>
+  </div>
+
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+      <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em">Trade log</div>
+      <span style="font-size:12px;color:var(--text3)" id="j-log-count">0 trades</span>
+    </div>
+    <div class="tl" id="j-timeline"><div class="empty">No trades logged yet</div></div>
+  </div>
+
+</div>
+
+<!-- ═══════ VWAP ═══════ -->
+
+<div class="page" id="tab-vwap">
+
+  <div class="trade-verdict tv-wait" id="vwap-signal-box">
+    <div class="mono" style="font-size:32px;color:#5ab4e8;margin-bottom:6px" id="vwap-big">—</div>
+    <div class="tv-label" id="vwap-dir-lbl" style="color:var(--text3)">—</div>
+    <div class="tv-sub" id="vwap-dir-sub">Tap Refresh to load data</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">VWAP detail</div>
+    <div class="srow"><span class="skey">Live price</span><span class="sval" id="vt-price">—</span></div>
+    <div class="srow"><span class="skey">VWAP</span><span class="sval" style="color:#5ab4e8" id="vt-vwap">—</span></div>
+    <div class="srow"><span class="skey">Distance</span><span class="sval" id="vt-dist">—</span></div>
+    <div class="srow"><span class="skey">Bias</span><span class="sval" id="vt-bias">—</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">VWAP rules</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <div style="flex:1;background:#0a1f10;border:1px solid var(--celadon-dark);border-radius:14px;padding:12px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:var(--celadon);margin-bottom:6px">&#8599; Above VWAP</div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5">Long bias only. Look for OR High breakouts with volume.</div>
+      </div>
+      <div style="flex:1;background:#1f0a0a;border:1px solid #c44;border-radius:14px;padding:12px;text-align:center">
+        <div style="font-size:13px;font-weight:700;color:#e55;margin-bottom:6px">&#8600; Below VWAP</div>
+        <div style="font-size:11px;color:var(--text3);line-height:1.5">Short bias only. Look for OR Low breakdowns with volume.</div>
+      </div>
+    </div>
+    <div style="padding:10px 12px;background:var(--bg);border-radius:12px;border:0.5px solid var(--border)">
+      <div style="font-size:11px;color:var(--lemon);font-weight:600;margin-bottom:4px">&#9888; At VWAP — wait</div>
+      <div style="font-size:11px;color:var(--text3);line-height:1.6">Price within 2–3 pts of VWAP = do not enter. VWAP acts as a magnet. Wait for a clean directional break before entering.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════ RULES ═══════ -->
+
+<div class="page" id="tab-rules">
+
+  <div class="rule-core">
+    <div class="rule-core-title">&#9888; Core Rule — Non-Negotiable</div>
+    <div class="rule-core-text">My stop-loss is based on <strong>market structure</strong>.<br>My position size adjusts to fit the stop — <strong>NOT the other way around.</strong></div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr"><span class="rule-section-icon">&#128293;</span><span class="rule-section-title">Risk Management</span></div>
+    <div class="rule-body">
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text"><strong>Max risk per trade: $200</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text"><strong>Max position size: 3 lots</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">If stop is wide → <strong>reduce lot size</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">If stop feels "too tight" → it's invalid, <strong>don't take the trade</strong></div></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr"><span class="rule-section-icon">&#127919;</span><span class="rule-section-title">Setup Rules (ORB)</span></div>
+    <div class="rule-body">
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">Trade <strong>ONLY clean ORB breakouts</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">Entry must have <strong>clear space</strong> — no nearby VWAP compression</div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">Long stop → <strong>below ORB low / demand</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">Short stop → <strong>above ORB high / supply</strong></div></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr"><span class="rule-section-icon">&#9889;</span><span class="rule-section-title">Execution Rules</span></div>
+    <div class="rule-body">
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text"><strong>Max 1–2 trades per session</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text"><strong>NO revenge trading</strong></div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text"><strong>NO re-entry</strong> unless a NEW setup forms</div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">If first trade is emotional → <strong>stop trading immediately</strong></div></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr"><span class="rule-section-icon">&#128337;</span><span class="rule-section-title">Session Rules</span></div>
+    <div class="rule-body">
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">Hit <strong>-1R (-$200)</strong> → done for the session</div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text">Hit <strong>+2R (+$400)</strong> → stop or scale down risk</div></div>
+      <div class="rule-item"><div class="rule-dot"></div><div class="rule-text"><strong>No trading in chop</strong> / VWAP compression</div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">&#129504; Mental Check — Before Entry</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px" id="mental-checks">
+      <div class="mental-q" id="mq0">
+        <div class="mental-q-text">Is my stop based on structure?</div>
+        <div class="mental-toggle">
+          <button class="mtbtn" id="mq0-yes" onclick="setMental(0,'yes')">Yes</button>
+          <button class="mtbtn" id="mq0-no" onclick="setMental(0,'no')">No</button>
+        </div>
+      </div>
+      <div class="mental-q" id="mq1">
+        <div class="mental-q-text">Is there space for price to move?</div>
+        <div class="mental-toggle">
+          <button class="mtbtn" id="mq1-yes" onclick="setMental(1,'yes')">Yes</button>
+          <button class="mtbtn" id="mq1-no" onclick="setMental(1,'no')">No</button>
+        </div>
+      </div>
+      <div class="mental-q" id="mq2">
+        <div class="mental-q-text">Am I calm — not trying to make money back?</div>
+        <div class="mental-toggle">
+          <button class="mtbtn" id="mq2-yes" onclick="setMental(2,'yes')">Yes</button>
+          <button class="mtbtn" id="mq2-no" onclick="setMental(2,'no')">No</button>
+        </div>
+      </div>
+    </div>
+    <div class="trade-verdict tv-wait" id="mental-verdict">
+      <div class="tv-label" id="mv-label" style="color:var(--lemon)">Answer all questions</div>
+      <div class="tv-sub" id="mv-sub">All three must be YES to take the trade</div>
+    </div>
+  </div>
+
+  <div style="background:var(--coffee-mid);border-radius:16px;padding:14px 16px;border:0.5px solid var(--lemon-dark)">
+    <div style="font-size:11px;color:var(--lemon);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px">Identity Rule</div>
+    <div style="font-size:13px;color:var(--honeydew);line-height:1.8">I am not here to be right.<br>I am here to <strong style="color:var(--lemon)">execute clean trades with discipline.</strong><br><br>Consistency > single trade wins.</div>
+  </div>
+
+</div>
+
+<!-- ═══════ CONTRACTS ═══════ -->
+
+<div class="page" id="tab-contracts">
+  <div style="font-size:12px;color:var(--text3);line-height:1.6">Tick and point values per contract. Know your risk before sizing your position.</div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">NQ — Nasdaq-100 Futures</span><span style="font-size:11px;color:#a8c8e0">E-mini</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Exchange</span><span class="sval m">CME Globex</span></div>
+      <div class="srow"><span class="skey">Tick size</span><span class="sval" style="color:var(--lemon)">0.25 points</span></div>
+      <div class="srow"><span class="skey">Tick value</span><span class="sval" style="color:var(--lemon)">$5.00 / tick</span></div>
+      <div class="srow"><span class="skey">Point value</span><span class="sval g">$20.00 / point</span></div>
+      <div class="srow"><span class="skey">Session open</span><span class="sval" style="color:#5ab4e8">9:30 AM ET</span></div>
+      <div class="srow"><span class="skey">Example</span><span class="sval m">10 pts = $200 / contract</span></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">MNQ — Micro Nasdaq-100</span><span style="font-size:11px;color:#a8c8e0">Micro E-mini</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Tick size</span><span class="sval" style="color:var(--lemon)">0.25 points</span></div>
+      <div class="srow"><span class="skey">Tick value</span><span class="sval" style="color:var(--lemon)">$0.50 / tick</span></div>
+      <div class="srow"><span class="skey">Point value</span><span class="sval g">$2.00 / point</span></div>
+      <div class="srow"><span class="skey">Session open</span><span class="sval" style="color:#5ab4e8">9:30 AM ET</span></div>
+      <div class="srow"><span class="skey">Example</span><span class="sval m">10 pts = $20 / contract</span></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">GC — Gold Futures</span><span style="font-size:11px;color:#a8c8e0">100 troy oz</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Exchange</span><span class="sval m">COMEX</span></div>
+      <div class="srow"><span class="skey">Tick size</span><span class="sval" style="color:var(--lemon)">0.10 points</span></div>
+      <div class="srow"><span class="skey">Tick value</span><span class="sval" style="color:var(--lemon)">$10.00 / tick</span></div>
+      <div class="srow"><span class="skey">Point value</span><span class="sval g">$100.00 / point</span></div>
+      <div class="srow"><span class="skey">Pit open</span><span class="sval" style="color:#5ab4e8">8:20 AM ET</span></div>
+      <div class="srow"><span class="skey">Example</span><span class="sval m">10 pts = $1,000 / contract</span></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">MGC — Micro Gold</span><span style="font-size:11px;color:#a8c8e0">10 troy oz</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Tick size</span><span class="sval" style="color:var(--lemon)">0.10 points</span></div>
+      <div class="srow"><span class="skey">Tick value</span><span class="sval" style="color:var(--lemon)">$1.00 / tick</span></div>
+      <div class="srow"><span class="skey">Point value</span><span class="sval g">$10.00 / point</span></div>
+      <div class="srow"><span class="skey">Pit open</span><span class="sval" style="color:#5ab4e8">8:20 AM ET</span></div>
+      <div class="srow"><span class="skey">Example</span><span class="sval m">10 pts = $100 / contract</span></div>
+    </div>
+  </div>
+
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">XAUUSD — Spot Gold</span><span style="font-size:11px;color:#a8c8e0">Forex / CFD</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Tick size</span><span class="sval" style="color:var(--lemon)">0.01 points</span></div>
+      <div class="srow"><span class="skey">Pip value</span><span class="sval" style="color:var(--lemon)">$1.00 / pip (1 std lot)</span></div>
+      <div class="srow"><span class="skey">Point value</span><span class="sval g">$1.00 / point (1 lot)</span></div>
+      <div class="srow"><span class="skey">London open</span><span class="sval" style="color:#5ab4e8">3:00 AM ET</span></div>
+      <div class="srow"><span class="skey">NY open</span><span class="sval" style="color:#5ab4e8">8:00 AM ET</span></div>
+      <div class="srow"><span class="skey">Example</span><span class="sval m">10 pts = $10 / lot (broker varies)</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ ORB GUIDE ═══════ -->
+
+<div class="page" id="tab-orbguide">
+  <div class="card" style="background:#0d1808">
+    <div class="card-title">Currently selected</div>
+    <div style="font-size:20px;font-weight:700;color:var(--lemon);margin-bottom:4px" id="orb-sel-inst">NQ</div>
+    <div style="font-size:12px;color:var(--text3);line-height:1.6" id="orb-sel-detail">Mark the 9:30 AM ET 15-min candle. Entry on 5-min or 3-min close outside the range.</div>
+  </div>
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">NQ / MNQ</span><span style="font-size:11px;color:#a8c8e0">Nasdaq Futures</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Session open</span><span class="sval m">9:30 AM ET</span></div>
+      <div class="srow"><span class="skey">Candle to mark</span><span class="sval" style="color:var(--lemon)">9:30 AM — 15 min</span></div>
+      <div class="srow"><span class="skey">ORB closes</span><span class="sval g">9:45 AM ET</span></div>
+      <div class="srow"><span class="skey">Entry TF</span><span class="sval m">5 min or 3 min</span></div>
+      <div class="srow"><span class="skey">Kill zone</span><span class="sval" style="color:#5ab4e8">9:30 AM – 12:00 PM ET</span></div>
+    </div>
+  </div>
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">GC / MGC</span><span style="font-size:11px;color:#a8c8e0">Gold Futures</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">Pit open</span><span class="sval m">8:20 AM ET</span></div>
+      <div class="srow"><span class="skey">Candle to mark</span><span class="sval" style="color:var(--lemon)">8:20 AM — 15 min</span></div>
+      <div class="srow"><span class="skey">ORB closes</span><span class="sval g">8:35 AM ET</span></div>
+      <div class="srow"><span class="skey">Entry TF</span><span class="sval m">5 min or 3 min</span></div>
+      <div class="srow"><span class="skey">Kill zone</span><span class="sval" style="color:#5ab4e8">8:20 AM – 11:00 AM ET</span></div>
+    </div>
+  </div>
+  <div class="rule-section">
+    <div class="rule-section-hdr" style="justify-content:space-between"><span class="rule-section-title">XAUUSD</span><span style="font-size:11px;color:#a8c8e0">Spot Gold</span></div>
+    <div class="rule-body" style="gap:0">
+      <div class="srow"><span class="skey">London open</span><span class="sval m">3:00 AM ET</span></div>
+      <div class="srow"><span class="skey">NY open</span><span class="sval m">8:00 AM ET</span></div>
+      <div class="srow"><span class="skey">Candle to mark</span><span class="sval" style="color:var(--lemon)">3:00 or 8:00 AM — 15 min</span></div>
+      <div class="srow"><span class="skey">Entry TF</span><span class="sval m">5 min or 3 min</span></div>
+      <div class="srow"><span class="skey">Kill zones</span><span class="sval" style="color:#5ab4e8">3–5 AM / 8–11 AM ET</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════ STATS ═══════ -->
+
+<div class="page" id="tab-stats">
+  <div class="sg2">
+    <div class="stile"><div class="snum a" id="st-trades">0</div><div class="slbl">Trades</div></div>
+    <div class="stile"><div class="snum" id="st-wr">0%</div><div class="slbl">Win rate</div></div>
+    <div class="stile"><div class="snum g" id="st-wins">0</div><div class="slbl">Wins</div></div>
+    <div class="stile"><div class="snum r" id="st-losses">0</div><div class="slbl">Losses</div></div>
+  </div>
+  <div class="sg2">
+    <div class="stile"><div class="snum" id="st-r">0R</div><div class="slbl">Total R</div></div>
+    <div class="stile"><div class="snum a" id="st-aplus">0%</div><div class="slbl">A+ rate</div></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="font-size:12px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.07em">Session log</div>
+    <span style="font-size:12px;color:var(--text3)" id="log-count">0 trades</span>
+  </div>
+  <div class="tl" id="timeline"><div class="empty">No trades logged this session</div></div>
+  <button class="ns-btn" onclick="resetAll()">New Session</button>
+</div>
+
+</div><!-- end app -->
+
+<script>
+// ── INSTRUMENT META ────────────────────────────────────────────
+const INST={
+  'NQ':  {tickSize:0.25, tickVal:5,    pointVal:20,   ticksPerPt:4,  maxLots:3},
+  'MNQ': {tickSize:0.25, tickVal:0.5,  pointVal:2,    ticksPerPt:4,  maxLots:3},
+  'GC':  {tickSize:0.10, tickVal:10,   pointVal:100,  ticksPerPt:10, maxLots:3},
+  'MGC': {tickSize:0.10, tickVal:1,    pointVal:10,   ticksPerPt:10, maxLots:3},
+  'XAUUSD':{tickSize:0.01,tickVal:1,   pointVal:1,    ticksPerPt:100,maxLots:3},
+};
+const ORB_GUIDE={
+  'NQ':'Mark the 9:30 AM ET 15-min candle (closes 9:45 AM). Entry on 5-min or 3-min close outside the range.',
+  'MNQ':'Mark the 9:30 AM ET 15-min candle (closes 9:45 AM). Entry on 5-min or 3-min close outside the range.',
+  'GC':'Mark the 8:20 AM ET 15-min candle (closes 8:35 AM). NY secondary at 9:30 AM.',
+  'MGC':'Mark the 8:20 AM ET 15-min candle (closes 8:35 AM). NY secondary at 9:30 AM.',
+  'XAUUSD':'London: mark 3:00 AM ET 15-min candle. NY overlap: mark 8:00 AM ET 15-min candle.',
+};
+
+// Checklist items — type: 'long'=only valid for long, 'short'=only valid for short, 'both'=both, 'bias'=determines bias
+const CHECKS=[
+  {id:'orb',   text:'ORB fully formed — 15 min candle has closed',      pts:1, type:'both'},
+  {id:'vwap_above', text:'Price is ABOVE VWAP → Long bias',            pts:2, type:'long', biasDir:'long'},
+  {id:'vwap_below', text:'Price is BELOW VWAP → Short bias',           pts:2, type:'short', biasDir:'short'},
+  {id:'break_long',  text:'Clean 5/3 min candle close ABOVE OR High',  pts:2, type:'long'},
+  {id:'break_short', text:'Clean 5/3 min candle close BELOW OR Low',   pts:2, type:'short'},
+  {id:'vol',   text:'Volume expansion on the breakout candle',          pts:1, type:'both'},
+  {id:'align', text:'OR level aligns with PDH/PDL or PMH/PML',         pts:0, type:'both'},
+  {id:'space', text:'Clear space ahead — no VWAP compression nearby',  pts:1, type:'both'},
+  {id:'fake',  text:'No fakeout — no immediate snap back after break',  pts:0, type:'both'},
+];
+const MAX_PTS=9;
+
+let S={
+  yticker:'NQ=F', label:'NQ', isGold:false,
+  checks:{}, bias:'none',
+  levels:{pdh:null,pdl:null,pmh:null,pml:null,orbh:null,orbl:null,live:null,vwap:null},
+  session:{trades:0,wins:0,losses:0,totalR:0,aplus:0,log:[]},
+  mental:[null,null,null],
+};
+
+// ── CLOCK ──────────────────────────────────────────────────────
+function tick(){
+  const now=new Date();
+  document.getElementById('et-clock').textContent=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).format(now);
+  document.getElementById('mny').textContent=new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'2-digit',minute:'2-digit',hour12:false}).format(now);
+  document.getElementById('mlon').textContent=new Intl.DateTimeFormat('en-US',{timeZone:'Europe/London',hour:'2-digit',minute:'2-digit',hour12:false}).format(now);
+  document.getElementById('mtok').textContent=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Tokyo',hour:'2-digit',minute:'2-digit',hour12:false}).format(now);
+  const etD=new Date(now.toLocaleString('en-US',{timeZone:'America/New_York'}));
+  const h=etD.getHours(),m=etD.getMinutes(),day=etD.getDay(),mins=h*60+m,wknd=day===0||day===6;
+  const dot=document.getElementById('mdot'),lbl=document.getElementById('mlbl'),bar=document.getElementById('mbar');
+  if(wknd){dot.style.cssText='background:#555';lbl.style.color='#555';lbl.textContent='Markets closed — weekend';bar.className='mbar';}
+  else if(mins>=570&&mins<960){dot.style.cssText='background:var(--celadon);box-shadow:0 0 6px var(--celadon)';lbl.style.color='var(--celadon)';lbl.textContent='Market open — RTH';bar.className='mbar open';}
+  else if(mins>=240&&mins<570){dot.style.cssText='background:var(--lemon);box-shadow:0 0 5px var(--lemon)';lbl.style.color='var(--lemon)';lbl.textContent='Pre-market session';bar.className='mbar pre';}
+  else if(mins>=960&&mins<1200){dot.style.cssText='background:#5ab4e8;box-shadow:0 0 5px #5ab4e8';lbl.style.color='#5ab4e8';lbl.textContent='After hours';bar.className='mbar after';}
+  else{dot.style.cssText='background:#555';lbl.style.color='#555';lbl.textContent='Overnight / Globex';bar.className='mbar';}
+  const inKill=S.isGold?((h===8&&m>=20)||(h>=9&&h<11)):((h===9&&m>=30)||(h>=10&&h<12));
+  const kc=document.getElementById('kill-card');
+  kc.className='kill-card '+(inKill?'on':'off');
+  document.getElementById('ktitle').textContent=inKill?'Kill zone active — watch for setup':'Kill zone inactive';
+  document.getElementById('ksub').textContent=inKill?'Run checklist before entering':(S.isGold?'GC/Gold: 8:20–11:00 AM ET':'NQ: 9:30 AM–12:00 PM ET');
+}
+setInterval(tick,1000);tick();
+
+function showTab(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setInst(el,yticker,label,isGold){
+  S.yticker=yticker;S.label=label;S.isGold=isGold;
+  document.querySelectorAll('.ibtn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('calc-inst-lbl').textContent=label;
+  document.getElementById('clvl-inst').textContent=label;
+  document.getElementById('orb-sel-inst').textContent=label;
+  document.getElementById('orb-sel-detail').textContent=ORB_GUIDE[label]||'';
+  const meta=INST[label];
+  if(meta){
+    document.getElementById('calc-tick-val').textContent='$'+meta.tickVal.toFixed(2)+' / tick · $'+meta.pointVal.toFixed(2)+' / point';
+    document.getElementById('calc-max-lots').textContent=meta.maxLots;
+  }
+  clearLevels();fetchAll();calcA();calcB();calcC();
+}
+
+function clearLevels(){
+  S.levels={pdh:null,pdl:null,pmh:null,pml:null,orbh:null,orbl:null,live:null,vwap:null};
+  ['lv-pdh','lv-pdl','lv-pmh','lv-pml','lv-orbh','lv-orbl'].forEach(id=>document.getElementById(id).textContent='—');
+  document.getElementById('live-price').textContent='—';
+  document.getElementById('price-chg').textContent='';
+  document.getElementById('vwap-val').textContent='—';
+  document.getElementById('vwap-pos').textContent='';
+  document.getElementById('vwap-pos').className='vpill';
+}
+
+function setConn(s){document.getElementById('conn').className='conn'+(s==='live'?' live':s==='err'?' err':s==='loading'?' loading':'');}
+
+// ── CALCULATOR ────────────────────────────────────────────────
+let calcMode = 'risk';
+
+function setCalcMode(mode){
+  calcMode = mode;
+  ['risk','lots','rr'].forEach(m=>{
+    document.getElementById('calc-mode-'+m).style.display = m===mode?'':'none';
+    document.getElementById('mode-btn-'+m).className = 'tab'+(m===mode?' active':'');
+    document.getElementById('mode-btn-'+m).style.borderRadius='14px';
+    document.getElementById('mode-btn-'+m).style.flex='1';
+    document.getElementById('mode-btn-'+m).style.fontSize='12px';
+  });
+}
+
+function getMeta(){return INST[S.label]||INST['NQ'];}
+
+// Sync stop fields within a mode prefix (a, b, c)
+function syncStop(from, prefix){
+  const meta = getMeta();
+  const tEl=document.getElementById(prefix+'-ticks');
+  const pEl=document.getElementById(prefix+'-pts');
+  const uEl=document.getElementById(prefix+'-usd');
+  let ticks, pts, usd;
+  if(from==='ticks'){
+    ticks=parseFloat(tEl.value)||0;
+    pts=ticks*meta.tickSize;
+    usd=ticks*meta.tickVal;
+    pEl.value=pts>0?pts.toFixed(2):'';
+    uEl.value=usd>0?usd.toFixed(2):'';
+  } else if(from==='pts'){
+    pts=parseFloat(pEl.value)||0;
+    ticks=Math.round(pts/meta.tickSize);
+    usd=ticks*meta.tickVal;
+    tEl.value=ticks>0?ticks:'';
+    uEl.value=usd>0?usd.toFixed(2):'';
+  } else {
+    usd=parseFloat(uEl.value)||0;
+    ticks=Math.round(usd/meta.tickVal);
+    pts=ticks*meta.tickSize;
+    tEl.value=ticks>0?ticks:'';
+    pEl.value=pts>0?pts.toFixed(2):'';
+  }
+  if(prefix==='a') calcA();
+  else if(prefix==='b') calcB();
+  else calcC();
+}
+
+function verdict(el, totalRisk, lots, meta){
+  if(totalRisk>200){
+    el.innerHTML='<div class="warn-box">&#9888; $'+totalRisk.toFixed(2)+' exceeds your $200 max. Reduce lots or tighten stop.</div>';
+  } else if(lots>=meta.maxLots){
+    el.innerHTML='<div class="warn-box">&#9888; Capped at '+meta.maxLots+' lots max.</div>';
+  } else {
+    el.innerHTML='<div class="good-box">&#10003; Within rules &mdash; $'+totalRisk.toFixed(2)+' risk / $'+(totalRisk*2).toFixed(2)+' target</div>';
+  }
+}
+
+// MODE A: given risk + stop -> find lots
+function calcA(){
+  const meta=getMeta();
+  const risk=parseFloat(document.getElementById('a-risk').value)||200;
+  const rr=parseFloat(document.getElementById('a-rr').value)||2;
+  const ticks=parseFloat(document.getElementById('a-ticks').value)||0;
+  if(ticks<=0){
+    document.getElementById('a-lots').textContent='--';
+    ['a-res-lots','a-res-stop-usd','a-res-risk','a-res-tp-pts','a-res-tp-ticks','a-res-tp-usd','a-res-reward'].forEach(id=>document.getElementById(id).textContent='--');
+    document.getElementById('a-verdict').innerHTML='';
+    return;
+  }
+  const stopUsd=ticks*meta.tickVal;
+  const rawLots=risk/stopUsd;
+  const lots=Math.max(1,Math.min(meta.maxLots,Math.floor(rawLots)));
+  const totalRisk=lots*stopUsd;
+  const tpTicks=ticks*rr;
+  const tpPts=tpTicks*meta.tickSize;
+  const tpUsd=tpTicks*meta.tickVal;
+  document.getElementById('a-lots').textContent=lots;
+  document.getElementById('a-res-lots').textContent=lots+' lot'+(lots>1?'s':'');
+  document.getElementById('a-res-stop-usd').textContent='$'+stopUsd.toFixed(2);
+  document.getElementById('a-res-risk').textContent='$'+totalRisk.toFixed(2);
+  document.getElementById('a-res-tp-pts').textContent=tpPts.toFixed(2)+' pts';
+  document.getElementById('a-res-tp-ticks').textContent=Math.round(tpTicks)+' ticks';
+  document.getElementById('a-res-tp-usd').textContent='$'+tpUsd.toFixed(2);
+  document.getElementById('a-res-reward').textContent='$'+(lots*tpUsd).toFixed(2);
+  verdict(document.getElementById('a-verdict'), totalRisk, lots, meta);
+}
+
+// MODE B: given lots + stop -> find dollar risk
+function calcB(){
+  const meta=getMeta();
+  const lots=parseFloat(document.getElementById('b-lots').value)||1;
+  const rr=parseFloat(document.getElementById('b-rr').value)||2;
+  const ticks=parseFloat(document.getElementById('b-ticks').value)||0;
+  if(ticks<=0){
+    document.getElementById('b-risk').textContent='--';
+    ['b-res-stop-usd','b-res-risk','b-res-tp-pts','b-res-tp-ticks','b-res-tp-usd','b-res-reward'].forEach(id=>document.getElementById(id).textContent='--');
+    document.getElementById('b-verdict').innerHTML='';
+    return;
+  }
+  const stopUsd=ticks*meta.tickVal;
+  const totalRisk=lots*stopUsd;
+  const tpTicks=ticks*rr;
+  const tpPts=tpTicks*meta.tickSize;
+  const tpUsd=tpTicks*meta.tickVal;
+  document.getElementById('b-risk').textContent='$'+totalRisk.toFixed(2);
+  document.getElementById('b-res-stop-usd').textContent='$'+stopUsd.toFixed(2);
+  document.getElementById('b-res-risk').textContent='$'+totalRisk.toFixed(2);
+  document.getElementById('b-res-tp-pts').textContent=tpPts.toFixed(2)+' pts';
+  document.getElementById('b-res-tp-ticks').textContent=Math.round(tpTicks)+' ticks';
+  document.getElementById('b-res-tp-usd').textContent='$'+tpUsd.toFixed(2);
+  document.getElementById('b-res-reward').textContent='$'+(lots*tpUsd).toFixed(2);
+  verdict(document.getElementById('b-verdict'), totalRisk, lots, meta);
+}
+
+// MODE C: given entry + lots + risk -> exact chart prices
+function calcC(){
+  const meta=getMeta();
+  const entry=parseFloat(document.getElementById('c-entry').value)||0;
+  const lots=parseFloat(document.getElementById('c-lots').value)||1;
+  const risk=parseFloat(document.getElementById('c-risk').value)||200;
+  const rr=parseFloat(document.getElementById('c-rr').value)||2;
+  const maxStopUsdPerLot=risk/lots;
+  const maxStopTicks=Math.floor(maxStopUsdPerLot/meta.tickVal);
+  const maxStopPts=maxStopTicks*meta.tickSize;
+  const tpTicks=maxStopTicks*rr;
+  const tpPts=tpTicks*meta.tickSize;
+  const totalRisk=lots*maxStopTicks*meta.tickVal;
+  const totalReward=lots*tpTicks*meta.tickVal;
+  document.getElementById('c-res-stop-ticks').textContent=maxStopTicks+' ticks';
+  document.getElementById('c-res-stop-pts').textContent=maxStopPts.toFixed(2)+' pts';
+  if(entry>0){
+    const slLong=(entry-maxStopPts).toFixed(2);
+    const tpLong=(entry+tpPts).toFixed(2);
+    const slShort=(entry+maxStopPts).toFixed(2);
+    const tpShort=(entry-tpPts).toFixed(2);
+    document.getElementById('c-res-sl-long').textContent=slLong;
+    document.getElementById('c-res-tp-long').textContent=tpLong;
+    document.getElementById('c-res-sl-short').textContent=slShort;
+    document.getElementById('c-res-tp-short').textContent=tpShort;
+  } else {
+    ['c-res-sl-long','c-res-tp-long','c-res-sl-short','c-res-tp-short'].forEach(id=>document.getElementById(id).textContent='enter entry');
+  }
+  document.getElementById('c-res-risk').textContent='$'+totalRisk.toFixed(2);
+  document.getElementById('c-res-reward').textContent='$'+totalReward.toFixed(2);
+  verdict(document.getElementById('c-verdict'), totalRisk, lots, meta);
+}
+
+// ── FETCH ──────────────────────────────────────────────────────
+async function fetchWithTimeout(url,ms){
+  const ctrl=new AbortController();
+  const t=setTimeout(()=>ctrl.abort(),ms);
+  try{const r=await fetch(url,{signal:ctrl.signal});clearTimeout(t);return r;}
+  catch(e){clearTimeout(t);if(e.name==='AbortError')throw new Error('Timed out');throw e;}
+}
+async function yFetch(params){
+  const serverBase=window.location.origin;
+  const proxyUrl=serverBase+'/yahoo/'+encodeURIComponent(S.yticker)+'?params='+encodeURIComponent(params);
+  try{
+    const r=await fetchWithTimeout(proxyUrl,20000);
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const data=await r.json();
+    if(data.chart&&data.chart.error)throw new Error(data.chart.error.description||'Yahoo error');
+    if(data.error)throw new Error(data.error);
+    return data;
+  }catch(e){
+    console.warn('Server proxy failed, trying allorigins:',e.message);
+    const base='https://query1.finance.yahoo.com/v8/finance/chart/'+encodeURIComponent(S.yticker)+'?'+params;
+    const fallback='https://api.allorigins.win/raw?url='+encodeURIComponent(base);
+    const r2=await fetchWithTimeout(fallback,20000);
+    if(!r2.ok)throw new Error('HTTP '+r2.status);
+    const txt=await r2.text();
+    if(!txt||!txt.trim())throw new Error('Empty response');
+    const data2=JSON.parse(txt);
+    if(data2.chart&&data2.chart.error)throw new Error(data2.chart.error.description||'Yahoo error');
+    return data2;
+  }
+}
+
+async function fetchAll(){
+  setConn('loading');
+  try{
+    const [daily,intra]=await Promise.all([yFetch('interval=1d&range=5d'),yFetch('interval=5m&range=1d&includePrePost=true')]);
+    parseLevels(daily,intra);
+    setConn('live');
+    updateVwapTab();
+    updateOrbSizeVerdict();
+  }catch(e){setConn('err');console.error(e);}
+}
+
+function parseLevels(daily,intra){
+  const dp=2;
+  const dr=daily?.chart?.result?.[0];
+  if(dr){
+    const q=dr.indicators?.quote?.[0]||{};
+    const highs=q.high||[],lows=q.low||[];
+    for(let i=highs.length-2;i>=0;i--){
+      if(highs[i]!=null&&lows[i]!=null){
+        S.levels.pdh=highs[i];S.levels.pdl=lows[i];
+        document.getElementById('lv-pdh').textContent=highs[i].toFixed(dp);
+        document.getElementById('lv-pdl').textContent=lows[i].toFixed(dp);
+        break;
+      }
+    }
+    const lp=dr.meta?.regularMarketPrice,prev=dr.meta?.chartPreviousClose;
+    if(lp){
+      S.levels.live=lp;
+      document.getElementById('live-price').textContent=lp.toFixed(dp);
+      if(prev){const chg=lp-prev,pct=(chg/prev*100).toFixed(2);const el=document.getElementById('price-chg');el.textContent=(chg>=0?'+':'')+chg.toFixed(dp)+' ('+pct+'%)';el.className='price-chg '+(chg>=0?'cup':'cdn');}
+      document.getElementById('price-src').textContent=S.label+' · Yahoo Finance · 15 min delay';
+    }
+  }
+  const ir=intra?.chart?.result?.[0];
+  if(!ir)return;
+  const ts=ir.timestamp||[],iq=ir.indicators?.quote?.[0]||{};
+  const H=iq.high||[],L=iq.low||[],C=iq.close||[],V=iq.volume||[];
+  let pmH=null,pmL=null,orbH=null,orbL=null,vN=0,vD=0,lastC=null;
+  ts.forEach((t,i)=>{
+    const etD=new Date(new Date(t*1000).toLocaleString('en-US',{timeZone:'America/New_York'}));
+    const mins=etD.getHours()*60+etD.getMinutes();
+    const hi=H[i],lo=L[i],cl=C[i],vo=V[i];
+    if(hi==null||lo==null||cl==null)return;
+    lastC=cl;const tp=(hi+lo+cl)/3;
+    if(mins>=240&&mins<570){pmH=pmH===null?hi:Math.max(pmH,hi);pmL=pmL===null?lo:Math.min(pmL,lo);}
+    if(mins>=570&&vo){vN+=tp*vo;vD+=vo;}
+    if(mins>=570&&mins<585){orbH=orbH===null?hi:Math.max(orbH,hi);orbL=orbL===null?lo:Math.min(orbL,lo);}
+  });
+  if(lastC){S.levels.live=lastC;document.getElementById('live-price').textContent=lastC.toFixed(dp);}
+  if(pmH!==null){S.levels.pmh=pmH;S.levels.pml=pmL;document.getElementById('lv-pmh').textContent=pmH.toFixed(dp);document.getElementById('lv-pml').textContent=pmL.toFixed(dp);}
+  if(orbH!==null){S.levels.orbh=orbH;S.levels.orbl=orbL;document.getElementById('lv-orbh').textContent=orbH.toFixed(dp);document.getElementById('lv-orbl').textContent=orbL.toFixed(dp);}
+  if(vD>0){
+    const vwap=vN/vD;S.levels.vwap=vwap;
+    document.getElementById('vwap-val').textContent=vwap.toFixed(dp);
+    if(S.levels.live){
+      const above=S.levels.live>vwap;
+      const vp=document.getElementById('vwap-pos');
+      vp.textContent=above?'Above':'Below';
+      vp.className='vpill '+(above?'vabove':'vbelow');
+    }
+  }
+}
+
+function updateVwapTab(){
+  const l=S.levels,dp=2;
+  if(l.vwap) document.getElementById('vwap-big').textContent=l.vwap.toFixed(dp);
+  if(l.live) document.getElementById('vt-price').textContent=l.live.toFixed(dp);
+  if(l.vwap) document.getElementById('vt-vwap').textContent=l.vwap.toFixed(dp);
+  if(l.live&&l.vwap){
+    const above=l.live>l.vwap,dist=Math.abs(l.live-l.vwap);
+    const de=document.getElementById('vt-dist');
+    de.textContent=(above?'+':'-')+dist.toFixed(dp)+' pts';de.style.color=above?'var(--celadon)':'#e55';
+    const be=document.getElementById('vt-bias');
+    be.textContent=above?'Above VWAP — Long bias':'Below VWAP — Short bias';be.style.color=above?'var(--celadon)':'#e55';
+    const box=document.getElementById('vwap-signal-box');
+    const dl=document.getElementById('vwap-dir-lbl'),ds=document.getElementById('vwap-dir-sub');
+    if(dist<2.5){box.className='trade-verdict tv-wait';dl.textContent='AT VWAP';dl.style.color='var(--lemon)';ds.textContent='Within 2.5 pts — wait for a clear directional break before entering.';}
+    else if(above){box.className='trade-verdict tv-take';dl.innerHTML='&#8599; LONG BIAS';dl.style.color='var(--celadon)';ds.textContent='Price above VWAP. Only consider long setups. Wait for OR High breakout with volume.';}
+    else{box.className='trade-verdict tv-no';dl.innerHTML='&#8600; SHORT BIAS';dl.style.color='#e55';ds.textContent='Price below VWAP. Only consider short setups. Wait for OR Low breakdown with volume.';}
+  }
+}
+
+// ── CHECKLIST ──────────────────────────────────────────────────
+function buildChecklist(){
+  const wrap=document.getElementById('cl-wrap');wrap.innerHTML='';
+  // Determine which checks to show based on current bias
+  const showBoth=S.bias==='none';
+  const showLong=S.bias==='long'||showBoth;
+  const showShort=S.bias==='short'||showBoth;
+
+  CHECKS.forEach(c=>{
+    if(c.type==='long'&&!showLong) return;
+    if(c.type==='short'&&!showShort) return;
+    const s=S.checks[c.id]||'none';
+    const div=document.createElement('div');
+    let cls='clitem';
+    if(s==='pass') cls+=' pass';
+    else if(s==='fail') cls+=' fail';
+    // Bias items get neutral style when selected
+    if(c.biasDir&&s==='pass') cls='clitem neutral';
+    div.className=cls;
+    div.onclick=()=>cycleCheck(c.id,c);
+    const badge=c.type==='long'?'<span class="ci-badge badge-long">Long</span>':
+                 c.type==='short'?'<span class="ci-badge badge-short">Short</span>':
+                 c.pts>0?'<span class="ci-badge badge-pts">+'+c.pts+'pt</span>':'';
+    div.innerHTML='<div class="cidot">'+(s==='pass'?'&#10003;':s==='fail'?'&#10005;':'')+'</div><div class="citext">'+c.text+'</div>'+badge;
+    wrap.appendChild(div);
+  });
+
+  // Score
+  let score=0;
+  CHECKS.forEach(c=>{if(S.checks[c.id]==='pass')score+=c.pts;});
+  const blocked=CHECKS.some(c=>S.checks[c.id]==='fail'&&c.type!=='long'&&c.type!=='short');
+  const pct=Math.round(score/MAX_PTS*100);
+  document.getElementById('ck-score').textContent=score;
+  const bar=document.getElementById('score-bar');
+  bar.style.width=pct+'%';
+  bar.style.background=blocked?'#c44':score>=7?'var(--celadon)':score>=4?'var(--lemon)':'#c44';
+
+  // Grade
+  const grade=getGrade(score,blocked);
+  const gEl=document.getElementById('ck-grade');
+  gEl.textContent=grade==='A+'?'A+ Setup':grade==='B'?'B Setup':grade==='F'?'Do Not Trade':'No Setup';
+  gEl.className='gpill '+(grade==='A+'?'gA':grade==='B'?'gB':'gC');
+
+  // Bias display
+  document.getElementById('ck-bias').textContent='Bias: '+(S.bias==='long'?'&#8599; Long':S.bias==='short'?'&#8600; Short':'—');
+
+  // Verdict
+  updateChecklistVerdict(grade,blocked);
+}
+
+function cycleCheck(id,check){
+  const s=S.checks[id]||'none';
+  // Bias checks — mutually exclusive
+  if(check&&check.biasDir){
+    if(s==='none'||s==='fail'){
+      // Clear opposite bias
+      if(check.biasDir==='long'){S.checks['vwap_below']='none';S.bias='long';}
+      else{S.checks['vwap_above']='none';S.bias='short';}
+      S.checks[id]='pass';
+    } else {
+      S.checks[id]='none';
+      S.bias='none';
+    }
+  } else {
+    S.checks[id]=s==='none'?'pass':s==='pass'?'fail':'none';
+  }
+  buildChecklist();
+}
+
+function getGrade(score,blocked){
+  if(blocked) return 'F';
+  if(score>=7) return 'A+';
+  if(score>=4) return 'B';
+  return 'C';
+}
+
+function updateChecklistVerdict(grade,blocked){
+  const box=document.getElementById('ck-verdict');
+  const lbl=document.getElementById('cv-label');
+  const sub=document.getElementById('cv-sub');
+  const bias=S.bias;
+  if(blocked){
+    box.className='trade-verdict tv-no';lbl.textContent='NO TRADE';lbl.style.color='#e55';
+    sub.textContent='A condition failed. Do not enter. Wait for a clean setup.';
+  } else if(grade==='A+'&&bias!=='none'){
+    box.className='trade-verdict tv-take';
+    lbl.textContent=bias==='long'?'&#8599; TAKE LONG':'&#8600; TAKE SHORT';lbl.style.color=bias==='long'?'var(--celadon)':'#e55';
+    sub.textContent='A+ setup confirmed. Enter with bracket order. Stop = other side of OR. Target = 2R. Walk away.';
+  } else if(grade==='B'&&bias!=='none'){
+    box.className='trade-verdict tv-wait';lbl.textContent='PROCEED WITH CAUTION';lbl.style.color='var(--lemon)';
+    sub.textContent='Partial setup. Consider waiting for full A+ before entering.';
+  } else if(bias==='none'){
+    box.className='trade-verdict tv-wait';lbl.textContent='SET BIAS FIRST';lbl.style.color='var(--lemon)';
+    sub.textContent='Tap "Price is ABOVE VWAP" for long bias or "Price is BELOW VWAP" for short bias.';
+  } else {
+    box.className='trade-verdict tv-wait';lbl.textContent='— WAITING';lbl.style.color='var(--lemon)';
+    sub.textContent='Keep completing checklist conditions.';
+  }
+}
+
+function calcTrade(){
+  const entry=parseFloat(document.getElementById('inp-entry').value);
+  const sl=parseFloat(document.getElementById('inp-sl').value);
+  const rr=parseFloat(document.getElementById('inp-rr').value)||2;
+  if(isNaN(entry)||isNaN(sl)){
+    ['out-tp','out-reward'].forEach(id=>document.getElementById(id).textContent='—');
+    return;
+  }
+  const risk=Math.abs(entry-sl),reward=risk*rr,tp=S.bias==='short'?entry-reward:entry+reward;
+  document.getElementById('out-tp').textContent=tp.toFixed(2);
+  document.getElementById('out-reward').textContent='+'+reward.toFixed(2)+' pts';
+  // Also update lot calculator stop
+  const meta=INST[S.label];
+  if(meta&&risk>0){
+    const ticks=Math.round(risk/meta.tickSize);
+    document.getElementById('calc-stop-ticks').value=ticks;
+    document.getElementById('calc-stop-pts').value=risk.toFixed(2);
+    document.getElementById('calc-stop-usd').value=(ticks*meta.tickVal).toFixed(2);
+    calcLots();
+  }
+}
+
+// ── MENTAL CHECK ──────────────────────────────────────────────
+function setMental(i,val){
+  S.mental[i]=val;
+  ['yes','no'].forEach(v=>{
+    const el=document.getElementById('mq'+i+'-'+v);
+    el.className='mtbtn'+(val===v?(v==='yes'?' yes-active':' no-active'):'');
+  });
+  updateMentalVerdict();
+}
+function updateMentalVerdict(){
+  const box=document.getElementById('mental-verdict');
+  const lbl=document.getElementById('mv-label');
+  const sub=document.getElementById('mv-sub');
+  const allAnswered=S.mental.every(v=>v!==null);
+  const allYes=S.mental.every(v=>v==='yes');
+  const anyNo=S.mental.some(v=>v==='no');
+  if(!allAnswered){box.className='trade-verdict tv-wait';lbl.textContent='Answer all questions';lbl.style.color='var(--lemon)';sub.textContent='All three must be YES to take the trade';}
+  else if(allYes){box.className='trade-verdict tv-take';lbl.textContent='CLEAR TO TRADE';lbl.style.color='var(--celadon)';sub.textContent='All checks passed. You are in the right mental state to execute.';}
+  else if(anyNo){box.className='trade-verdict tv-no';lbl.textContent='NO TRADE';lbl.style.color='#e55';sub.textContent='One or more mental checks failed. Step away — do not force a trade.';}
+}
+
+// ── LOGGING ──────────────────────────────────────────────────
+function etTime(){return new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hour:'numeric',minute:'2-digit',hour12:true}).format(new Date());}
+function logWin(){
+  const rr=parseFloat(document.getElementById('inp-rr').value)||2;
+  const grade=getGrade(parseInt(document.getElementById('ck-score').textContent)||0,false);
+  S.session.trades++;S.session.wins++;S.session.totalR+=rr;
+  if(grade==='A+')S.session.aplus++;
+  S.session.log.unshift({inst:S.label,dir:S.bias,result:'win',r:'+'+rr.toFixed(1)+'R',grade,time:etTime()});
+  updateStats();renderLog();resetChecklist();
+}
+function logLoss(){
+  const grade=getGrade(parseInt(document.getElementById('ck-score').textContent)||0,false);
+  S.session.trades++;S.session.losses++;S.session.totalR-=1;
+  if(grade==='A+')S.session.aplus++;
+  S.session.log.unshift({inst:S.label,dir:S.bias,result:'loss',r:'-1.0R',grade,time:etTime()});
+  updateStats();renderLog();resetChecklist();
+}
+function updateStats(){
+  const s=S.session;
+  document.getElementById('st-trades').textContent=s.trades;
+  document.getElementById('st-wins').textContent=s.wins;
+  document.getElementById('st-losses').textContent=s.losses;
+  const wr=s.trades>0?Math.round(s.wins/s.trades*100):0;
+  const wrEl=document.getElementById('st-wr');wrEl.textContent=wr+'%';wrEl.className='snum '+(wr>=50?'g':'r');
+  const r=s.totalR;
+  const rEl=document.getElementById('st-r');rEl.textContent=(r>=0?'+':'')+r.toFixed(1)+'R';rEl.className='snum '+(r>=0?'g':'r');
+  document.getElementById('st-aplus').textContent=(s.trades>0?Math.round(s.aplus/s.trades*100):0)+'%';
+}
+function renderLog(){
+  const tl=document.getElementById('timeline');
+  document.getElementById('log-count').textContent=S.session.log.length+' trade'+(S.session.log.length!==1?'s':'');
+  if(!S.session.log.length){tl.innerHTML='<div class="empty">No trades logged this session</div>';return;}
+  tl.innerHTML=S.session.log.map(t=>{
+    const gc=t.grade==='A+'?'gA':t.grade==='B'?'gB':'gC';
+    const isW=t.result==='win';
+    return '<div class="tlrow"><div class="tldot '+(isW?'dw':'dl')+'"></div><div class="tlbody"><div class="tltop"><span style="font-size:12px;font-weight:700;color:'+(isW?'var(--celadon)':'#e55')+'">'+(isW?'Win':'Loss')+'</span><span class="tldir '+(t.dir||'long')+'">'+(t.dir==='short'?'Short':'Long')+'</span><span class="tlgrade '+gc+'">'+t.grade+'</span><span style="font-size:11px;color:var(--text3)">'+t.inst+'</span></div><div class="tlsub">'+(t.grade==='A+'?'A+ setup':'t.grade==="B"?B setup':'Partial entry')+'</div></div><div class="tlright"><div class="tlr" style="color:'+(isW?'var(--celadon)':'#e55')+'">'+t.r+'</div><div class="tlt">'+t.time+'</div></div></div>';
+  }).join('');
+}
+function resetChecklist(){
+  S.checks={};S.bias='none';
+  ['inp-entry','inp-sl'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('inp-rr').value='2';
+  ['out-tp','out-reward'].forEach(id=>document.getElementById(id).textContent='—');
+  buildChecklist();
+}
+function resetAll(){
+  S.session={trades:0,wins:0,losses:0,totalR:0,aplus:0,log:[]};
+  S.mental=[null,null,null];
+  jSession={trades:0,wins:0,losses:0,totalR:0,totalUsd:0,winUsd:0,lossUsd:0,log:[]};
+  updateStats();renderLog();resetChecklist();updateMentalVerdict();updatePnl();renderJLog();resetPrep();
+}
+
+// ── PREP TAB ──────────────────────────────────────────────────
+let prepState = [null,null,null,null,null,null];
+
+function setPrep(i, val){
+  prepState[i] = val;
+  ['yes','no'].forEach(v=>{
+    const el = document.getElementById('pq'+i+'-'+v);
+    if(el) el.className = 'mtbtn'+(val===v?(v==='yes'?' yes-active':' no-active'):'');
+  });
+  updatePrepVerdict();
+  updateOrbSizeVerdict();
+}
+
+function updatePrepVerdict(){
+  const box = document.getElementById('prep-verdict');
+  const lbl = document.getElementById('pv-label');
+  const sub = document.getElementById('pv-sub');
+  const answered = prepState.filter(v=>v!==null).length;
+  const total = prepState.length;
+  const anyNo = prepState.some(v=>v==='no');
+  const hasNews = prepState[1]==='yes'; // Fed/FOMC question
+  if(answered < total){
+    box.className='trade-verdict tv-wait';
+    lbl.textContent=''+answered+' / '+total+' complete';lbl.style.color='var(--lemon)';
+    sub.textContent='Complete all prep steps before the session opens';
+  } else if(anyNo && !hasNews){
+    box.className='trade-verdict tv-no';
+    lbl.textContent='NOT READY';lbl.style.color='#e55';
+    sub.textContent='One or more prep steps incomplete. Do not trade until resolved.';
+  } else if(hasNews){
+    box.className='trade-verdict tv-wait';
+    lbl.textContent='HIGH IMPACT NEWS TODAY';lbl.style.color='var(--lemon)';
+    sub.textContent='Fed / FOMC / CPI today. Reduce size significantly or skip the session entirely.';
+  } else {
+    box.className='trade-verdict tv-take';
+    lbl.textContent='READY TO TRADE';lbl.style.color='var(--celadon)';
+    sub.textContent='All prep complete. Execute your plan with discipline.';
+  }
+}
+
+function updateOrbSizeVerdict(){
+  const orbH = S.levels.orbh, orbL = S.levels.orbl;
+  if(!orbH || !orbL) return;
+  const size = parseFloat((orbH - orbL).toFixed(2));
+  document.getElementById('orb-size-today').textContent = size.toFixed(2);
+  const meta = INST[S.label];
+  // Classify relative to typical ranges per instrument
+  const typical = {'NQ':25,'MNQ':25,'GC':8,'MGC':8,'XAUUSD':8}[S.label]||20;
+  const ratio = size / typical;
+  const vsEl = document.getElementById('orb-size-vs');
+  const verdEl = document.getElementById('orb-size-verdict');
+  if(ratio < 0.6){
+    vsEl.textContent='Tight'; vsEl.style.color='var(--celadon)';
+    verdEl.style.color='var(--celadon)';
+    verdEl.textContent='ORB is tight vs average — higher probability clean breakout. Normal lot size.';
+  } else if(ratio > 1.4){
+    vsEl.textContent='Wide'; vsEl.style.color='#e55';
+    verdEl.style.color='#e55';
+    verdEl.textContent='ORB is wide vs average — breakout needs more movement. Reduce lot size or wait for retrace entry.';
+  } else {
+    vsEl.textContent='Normal'; vsEl.style.color='var(--lemon)';
+    verdEl.style.color='var(--text2)';
+    verdEl.textContent='ORB is within normal range. Standard lot size applies.';
+  }
+  document.getElementById('orb-size-avg').textContent = typical.toFixed(1);
+}
+
+function resetPrep(){
+  prepState = [null,null,null,null,null,null];
+  for(let i=0;i<6;i++){
+    ['yes','no'].forEach(v=>{
+      const el = document.getElementById('pq'+i+'-'+v);
+      if(el) el.className='mtbtn';
+    });
+  }
+  document.getElementById('prep-notes').value='';
+  updatePrepVerdict();
+}
+
+// ── JOURNAL TAB ───────────────────────────────────────────────
+let jDir = 'long';
+let jSession = {trades:0, wins:0, losses:0, totalR:0, totalUsd:0, winUsd:0, lossUsd:0, log:[]};
+
+function setJDir(d){
+  jDir = d;
+  document.getElementById('j-long-btn').className = 'dbtn'+(d==='long'?' la':'');
+  document.getElementById('j-short-btn').className = 'dbtn'+(d==='short'?' sa':'');
+  updateJournalCalc();
+}
+
+function updateJournalCalc(){
+  const entry = parseFloat(document.getElementById('j-entry').value);
+  const sl = parseFloat(document.getElementById('j-sl').value);
+  const lots = parseFloat(document.getElementById('j-lots').value)||1;
+  const meta = INST[S.label];
+  if(!meta || isNaN(entry) || isNaN(sl)){
+    ['j-tp','j-risk-usd','j-reward-usd'].forEach(id=>document.getElementById(id).textContent='--');
+    return;
+  }
+  const stopPts = Math.abs(entry - sl);
+  const stopTicks = Math.round(stopPts / meta.tickSize);
+  const riskPerLot = stopTicks * meta.tickVal;
+  const totalRisk = lots * riskPerLot;
+  const tpPts = stopPts * 2;
+  const tp = jDir==='short' ? entry - tpPts : entry + tpPts;
+  const rewardPerLot = stopTicks * 2 * meta.tickVal;
+  const totalReward = lots * rewardPerLot;
+  document.getElementById('j-tp').textContent = tp.toFixed(2);
+  document.getElementById('j-risk-usd').textContent = '$'+totalRisk.toFixed(2);
+  document.getElementById('j-reward-usd').textContent = '$'+totalReward.toFixed(2);
+  // Pull grade from checklist
+  const score = parseInt(document.getElementById('ck-score').textContent)||0;
+  const grade = getGrade(score, CHECKS.some(c=>S.checks[c.id]==='fail'));
+  document.getElementById('j-grade').textContent = grade;
+  document.getElementById('j-grade').style.color = grade==='A+'?'var(--celadon)':grade==='B'?'var(--lemon)':'#e55';
+}
+
+function logJournalWin(){
+  const entry=parseFloat(document.getElementById('j-entry').value);
+  const sl=parseFloat(document.getElementById('j-sl').value);
+  const lots=parseFloat(document.getElementById('j-lots').value)||1;
+  const reason=document.getElementById('j-reason').value.trim();
+  const meta=INST[S.label];
+  if(!meta||isNaN(entry)||isNaN(sl)){alert('Enter entry and stop first');return;}
+  const stopPts=Math.abs(entry-sl);
+  const stopTicks=Math.round(stopPts/meta.tickSize);
+  const tpPts=stopPts*2;
+  const tp=jDir==='short'?entry-tpPts:entry+tpPts;
+  const winUsd=lots*stopTicks*2*meta.tickVal;
+  const grade=document.getElementById('j-grade').textContent||'C';
+  jSession.trades++;jSession.wins++;jSession.totalR+=2;jSession.totalUsd+=winUsd;jSession.winUsd+=winUsd;
+  jSession.log.unshift({inst:S.label,dir:jDir,result:'win',entry:entry.toFixed(2),sl:sl.toFixed(2),tp:tp.toFixed(2),lots,usd:'+$'+winUsd.toFixed(2),grade,reason,time:etTime()});
+  updatePnl();renderJLog();resetJournal();
+}
+
+function logJournalLoss(){
+  const entry=parseFloat(document.getElementById('j-entry').value);
+  const sl=parseFloat(document.getElementById('j-sl').value);
+  const lots=parseFloat(document.getElementById('j-lots').value)||1;
+  const reason=document.getElementById('j-reason').value.trim();
+  const meta=INST[S.label];
+  if(!meta||isNaN(entry)||isNaN(sl)){alert('Enter entry and stop first');return;}
+  const stopPts=Math.abs(entry-sl);
+  const stopTicks=Math.round(stopPts/meta.tickSize);
+  const lossUsd=lots*stopTicks*meta.tickVal;
+  const grade=document.getElementById('j-grade').textContent||'C';
+  jSession.trades++;jSession.losses++;jSession.totalR-=1;jSession.totalUsd-=lossUsd;jSession.lossUsd+=lossUsd;
+  jSession.log.unshift({inst:S.label,dir:jDir,result:'loss',entry:entry.toFixed(2),sl:sl.toFixed(2),tp:'--',lots,usd:'-$'+lossUsd.toFixed(2),grade,reason,time:etTime()});
+  updatePnl();renderJLog();resetJournal();
+}
+
+function updatePnl(){
+  const pnl=jSession.totalUsd;
+  const pEl=document.getElementById('pnl-dollar');
+  pEl.textContent=(pnl>=0?'+$':'-$')+Math.abs(pnl).toFixed(2);
+  pEl.style.color=pnl>=0?'var(--celadon)':'#e55';
+  const rEl=document.getElementById('pnl-r');
+  rEl.textContent=(jSession.totalR>=0?'+':'')+jSession.totalR.toFixed(1)+'R';
+  rEl.className='snum '+(jSession.totalR>=0?'g':'r');
+  document.getElementById('pnl-trades').textContent=jSession.trades;
+  document.getElementById('pnl-wins').textContent=jSession.wins;
+  document.getElementById('pnl-losses').textContent=jSession.losses;
+  const wr=jSession.trades>0?Math.round(jSession.wins/jSession.trades*100):0;
+  const wrEl=document.getElementById('pnl-wr');
+  wrEl.textContent=wr+'%';wrEl.style.color=wr>=50?'var(--celadon)':'#e55';
+  const avgWin=jSession.wins>0?jSession.winUsd/jSession.wins:0;
+  const avgLoss=jSession.losses>0?jSession.lossUsd/jSession.losses:0;
+  document.getElementById('pnl-avg-win').textContent=avgWin>0?'+$'+avgWin.toFixed(2):'--';
+  document.getElementById('pnl-avg-loss').textContent=avgLoss>0?'-$'+avgLoss.toFixed(2):'--';
+  // Session limit warnings
+  const warnEl=document.getElementById('pnl-limit-warn');
+  if(pnl<=-200){warnEl.innerHTML='<div class="warn-box">&#128721; -$200 session limit hit. You are DONE for today. Close the platform.</div>';}
+  else if(pnl>=400){warnEl.innerHTML='<div class="good-box">&#127942; +$400 reached. Consider stopping or scaling risk down significantly.</div>';}
+  else if(jSession.losses>=1){warnEl.innerHTML='<div class="warn-box">&#9888; 1 loss taken. Next trade must be A+ only. No revenge.</div>';}
+  else{warnEl.innerHTML='';}
+}
+
+function renderJLog(){
+  const tl=document.getElementById('j-timeline');
+  document.getElementById('j-log-count').textContent=jSession.log.length+' trade'+(jSession.log.length!==1?'s':'');
+  if(!jSession.log.length){tl.innerHTML='<div class="empty">No trades logged yet</div>';return;}
+  tl.innerHTML=jSession.log.map(t=>{
+    const isW=t.result==='win';
+    const gc=t.grade==='A+'?'gA':t.grade==='B'?'gB':'gC';
+    return '<div class="tlrow"><div class="tldot '+(isW?'dw':'dl')+'"></div><div class="tlbody"><div class="tltop"><span style="font-size:12px;font-weight:700;color:'+(isW?'var(--celadon)':'#e55')+'">'+(isW?'Win':'Loss')+'</span><span class="tldir '+(t.dir||'long')+'">'+(t.dir==='short'?'Short':'Long')+'</span><span class="tlgrade '+gc+'">'+t.grade+'</span><span style="font-size:11px;color:var(--text3)">'+t.inst+' &middot; '+t.lots+'L</span></div>'+(t.reason?'<div class="tlsub">'+t.reason.slice(0,60)+(t.reason.length>60?'...':'')+'</div>':'<div class="tlsub">Entry: '+t.entry+' &rarr; SL: '+t.sl+'</div>')+'</div><div class="tlright"><div class="tlr" style="color:'+(isW?'var(--celadon)':'#e55')+'">'+t.usd+'</div><div class="tlt">'+t.time+'</div></div></div>';
+  }).join('');
+}
+
+function resetJournal(){
+  ['j-entry','j-sl'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('j-lots').value='1';
+  document.getElementById('j-reason').value='';
+  setJDir('long');
+  ['j-tp','j-risk-usd','j-reward-usd'].forEach(id=>document.getElementById(id).textContent='--');
+  document.getElementById('j-grade').textContent='--';
+}
+
+// Init
+const initMeta=INST[S.label];
+if(initMeta){
+  document.getElementById('calc-tick-val').textContent='$'+initMeta.tickVal.toFixed(2)+' / tick · $'+initMeta.pointVal.toFixed(2)+' / point';
+  document.getElementById('calc-max-lots').textContent=initMeta.maxLots;
+}
+buildChecklist();updateStats();renderLog();
+setInterval(fetchAll,300000);
+fetchAll();
+</script>
+
+</body>
+</html>
