@@ -1,0 +1,12 @@
+{
+  "name": "orb-webhook-server",
+  "version": "1.0.0",
+  "description": "Webhook receiver for ORB TradingView alerts",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
